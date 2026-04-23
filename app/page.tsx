@@ -2344,7 +2344,7 @@ export default function Page() {
   displayHour,
   timeMode,
   daylightHours,
-  orientation,
+  orientationDeg,
 ]);
   
 
