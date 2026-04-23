@@ -72,7 +72,8 @@ type SunPatchResult = {
   segmented: boolean;
 };
 
-const BACKEND_URL = "http://127.0.0.1:8000/analyze";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 
 function degToRad(deg: number) {
   return (deg * Math.PI) / 180;
@@ -963,7 +964,7 @@ export default function Page() {
         verticalSpacing,
       };
 
-      const res = await fetch(BACKEND_URL, {
+      const res = await fetch(`${API_BASE}/analyze`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
