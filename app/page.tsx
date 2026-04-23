@@ -2376,16 +2376,16 @@ export default function Page() {
 }
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
-      <div className="mx-auto max-w-7xl p-6">
+    <main className="h-screen overflow-hidden bg-slate-50 text-slate-900">
+      <div className="mx-auto flex h-screen max-w-[1800px] flex-col p-4">
         <h1 className="text-3xl font-bold tracking-tight">Glare Analysis</h1>
         <p className="mt-2 text-sm text-slate-600">
           Geometric direct sun patch study with configurable shading devices.
         </p>
 
-             <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[380px_minmax(0,1fr)] items-start">
-              <section className="self-start lg:sticky lg:top-6 lg:h-[calc(100vh-3rem)]">
-                <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border bg-white shadow-sm">
+            <div className="mt-4 grid min-h-0 flex-1 grid-cols-[340px_minmax(0,1fr)_430px] gap-4">
+              <section className="min-h-0 overflow-y-auto rounded-2xl border border-slate-900 bg-white">
+                <div className="flex min-h-0 flex-col">
                   <div className="border-b px-4 py-3">
                     <h2 className="text-lg font-semibold">Inputs</h2>
                     <p className="mt-1 text-sm text-slate-500">
@@ -2648,7 +2648,7 @@ export default function Page() {
                 </div>
               </section>
 
-              <section className="min-w-0 space-y-6 lg:h-[calc(100vh-3rem)] lg:overflow-y-auto lg:pr-2">
+              <section className="min-h-0 overflow-y-auto rounded-2xl border border-slate-900 bg-white p-4 space-y-6">
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() =>
