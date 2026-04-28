@@ -2545,7 +2545,7 @@ if (!currentUser) {
           Geometric direct sun patch study with configurable shading devices.
         </p>
 
-            <div className="mt-4 grid min-h-0 flex-1 grid-cols-[340px_minmax(1000px,1fr)] gap-4">
+            <div className="mt-4 grid min-h-0 flex-1 grid-cols-[340px_minmax(0,1fr)] gap-4">
               <section className="min-h-0 overflow-y-auto rounded-2xl border border-slate-900 bg-white">
                 <div className="flex min-h-0 flex-col">
                   <div className="border-b px-4 py-3">
@@ -2848,7 +2848,7 @@ if (!currentUser) {
               </section>
 
               <section className="min-h-0 overflow-y-auto rounded-2xl border border-slate-900 bg-white p-4 space-y-6">
-                <div className="flex flex-wrap gap-2">
+                <div className="rounded-2xl border bg-white p-4 shadow-sm">
                   <button
                     onClick={() =>
                       exportSvgContainerAsPng(
@@ -2902,7 +2902,7 @@ if (!currentUser) {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-[340px_1fr] gap-6">
+                <div className="rounded-2xl border bg-white p-4 shadow-sm">
                   <div
                     ref={frontPreviewRef}
                     className="rounded-2xl border bg-white p-4 shadow-sm"
