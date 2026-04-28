@@ -640,11 +640,21 @@ function ScenarioLineChart({
                 key={`${s.id}-${hour}`}
                 cx={xAt(hour)}
                 cy={yAt(s.values[i])}
-                r="3.5"
+                r="5"
                 fill={color}
                 stroke="white"
                 strokeWidth="1.5"
-              />
+              >
+                <title>
+                  {`${s.name}
+              Time: ${hour}:00
+              ${yAxisLabel}: ${
+                    metric === "coverage_ratio"
+                      ? `${s.values[i].toFixed(1)}%`
+                      : `${s.values[i].toFixed(2)}`
+                  }`}
+                </title>
+              </circle>
             ))}
           </g>
         );
