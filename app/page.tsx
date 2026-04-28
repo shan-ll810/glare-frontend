@@ -783,16 +783,59 @@ function OrientationDial({
           strokeWidth="1.5"
         />
 
-        <text x={cx} y={cy - r - 8} textAnchor="middle" fontSize="12">
+        <text
+          x={cx}
+          y={cy - r - 8}
+          textAnchor="middle"
+          fontSize="12"
+          className="cursor-pointer select-none hover:font-bold"
+          onClick={(e) => {
+            e.stopPropagation();
+            onChange(0);
+          }}
+        >
           N
         </text>
-        <text x={cx + r + 10} y={cy + 4} textAnchor="middle" fontSize="12">
+
+        <text
+          x={cx + r + 10}
+          y={cy + 4}
+          textAnchor="middle"
+          fontSize="12"
+          className="cursor-pointer select-none hover:font-bold"
+          onClick={(e) => {
+            e.stopPropagation();
+            onChange(90);
+          }}
+        >
           E
         </text>
-        <text x={cx} y={cy + r + 16} textAnchor="middle" fontSize="12">
+
+        <text
+          x={cx}
+          y={cy + r + 16}
+          textAnchor="middle"
+          fontSize="12"
+          className="cursor-pointer select-none hover:font-bold"
+          onClick={(e) => {
+            e.stopPropagation();
+            onChange(180);
+          }}
+        >
           S
         </text>
-        <text x={cx - r - 10} y={cy + 4} textAnchor="middle" fontSize="12">
+
+        <text
+          x={cx - r - 10}
+          y={cy + 4}
+          textAnchor="middle"
+          fontSize="12"
+          className="cursor-pointer select-none hover:font-bold"
+          onClick={(e) => {
+            e.stopPropagation();
+            onChange(270);
+          }}
+        >
           W
         </text>
 
