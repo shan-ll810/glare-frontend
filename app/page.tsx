@@ -2584,9 +2584,23 @@ if (!currentUser) {
                     <label className="mt-4 block">
                       <div className="mb-1 flex items-center justify-between text-sm text-slate-600">
                         <span>Analysis Plane Height (ft)</span>
-                        <span className="font-medium text-slate-900">
-                          {analysisHeight.toFixed(1)} ft
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="number"
+                            value={analysisHeight}
+                            step="0.1"
+                            min="0"
+                            max={roomHeight}
+                            onChange={(e) => {
+                              const v = Number(e.target.value);
+                              if (!isNaN(v)) {
+                                setAnalysisHeight(Math.max(0, Math.min(roomHeight, v)));
+                              }
+                            }}
+                            className="w-20 rounded-lg border border-slate-300 px-2 py-1 text-sm text-right"
+                          />
+                          <span className="text-slate-600">ft</span>
+                        </div>
                       </div>
 
                       <input
@@ -2888,7 +2902,7 @@ if (!currentUser) {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div className="grid grid-cols-[340px_1fr] gap-6">
                   <div
                     ref={frontPreviewRef}
                     className="rounded-2xl border bg-white p-4 shadow-sm"
