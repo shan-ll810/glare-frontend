@@ -2902,17 +2902,17 @@ if (!currentUser) {
                   </button>
                 </div>
 
-                <div className="rounded-2xl border bg-white p-4 shadow-sm">
+                <div className="grid grid-cols-2 gap-4">
                   <div
                     ref={frontPreviewRef}
-                    className="rounded-2xl border bg-white p-4 shadow-sm"
+                    className="h-[260px] overflow-hidden rounded-2xl border bg-white p-4 shadow-sm"
                   >
                     {frontPreview}
                   </div>
 
                   <div
                     ref={topPreviewRef}
-                    className="rounded-2xl border bg-white p-4 shadow-sm"
+                    className="h-[260px] overflow-hidden rounded-2xl border bg-white p-4 shadow-sm"
                   >
                     {topPreview}
                   </div>
