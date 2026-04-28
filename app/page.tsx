@@ -1,6 +1,7 @@
 "use client";
 
 import { toPng } from "html-to-image";
+import { supabase } from "@/app/lib/supabase";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type TimeResult = {
@@ -2342,7 +2343,7 @@ if (!currentUser) {
         </label>
 
         <button
-          onClick={() => {
+          onClick={async () => {
             const name = loginName.trim();
             const email = loginEmail.trim().toLowerCase();
 
@@ -2352,8 +2353,22 @@ if (!currentUser) {
             }
 
             const user = { name, email };
+
+            // 本地存
             localStorage.setItem("glareAppUser", JSON.stringify(user));
             setCurrentUser(user);
+
+            // 存数据库
+            const { error } = await supabase.from("users").insert([
+              {
+                name: user.name,
+                email: user.email,
+              },
+            ]);
+
+            if (error) {
+              console.error("Failed to save user:", error.message);
+            }
           }}
           className="mt-6 w-full rounded-xl bg-slate-900 px-4 py-2 text-white hover:bg-slate-800"
         >
