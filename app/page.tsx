@@ -744,18 +744,9 @@ function OrientationDial({
         </div>
       </div>
 
-      <svg
+      <svg     
         viewBox={`0 0 ${size} ${size}`}
-        className="mx-auto h-44 w-44 cursor-pointer touch-none"
-        onPointerDown={(e) => {
-          e.currentTarget.setPointerCapture(e.pointerId);
-          onChange(eventToDeg(e));
-        }}
-        onPointerMove={(e) => {
-          if (e.buttons === 1) {
-            onChange(eventToDeg(e));
-          }
-        }}
+        className="mx-auto h-44 w-44 touch-none"
       >
         <circle
           cx={cx}
@@ -847,6 +838,16 @@ function OrientationDial({
           stroke="black"
           strokeWidth="7"
           strokeLinecap="round"
+          className="cursor-grab active:cursor-grabbing"
+          onPointerDown={(e) => {
+            e.currentTarget.setPointerCapture(e.pointerId);
+            onChange(eventToDeg(e));
+          }}
+          onPointerMove={(e) => {
+            if (e.buttons === 1) {
+              onChange(eventToDeg(e));
+            }
+          }}
         />
 
         <circle cx={cx} cy={cy} r="4.5" fill="black" />
