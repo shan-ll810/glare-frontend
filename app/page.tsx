@@ -882,6 +882,8 @@ export default function Page() {
   const [loginName, setLoginName] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
 
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+
   const [orientationDeg, setOrientationDeg] = useState(180);
 
   const scenarioStorageKey = currentUser
@@ -2391,33 +2393,39 @@ if (!currentUser) {
           </div>
 
           {currentUser && (
-            <div className="group relative">
-              <button className="rounded-xl border bg-white px-3 py-2 text-sm text-slate-700 shadow-sm hover:bg-slate-50">
+            <div className="relative">
+              <button
+                onClick={() => setUserMenuOpen((prev) => !prev)}
+                className="rounded-xl border bg-white px-3 py-2 text-sm text-slate-700 shadow-sm hover:bg-slate-50"
+              >
                 {currentUser.name}
               </button>
 
-              <div className="absolute right-0 z-50 mt-2 hidden w-44 rounded-xl border bg-white p-2 shadow-lg group-hover:block">
-                <div className="px-2 py-1 text-xs text-slate-500 truncate">
-                  {currentUser.email}
-                </div>
+              {userMenuOpen && (
+                <div className="absolute right-0 z-50 mt-2 w-44 rounded-xl border bg-white p-2 shadow-lg">
+                  <div className="truncate px-2 py-1 text-xs text-slate-500">
+                    {currentUser.email}
+                  </div>
 
-                <button
-                  onClick={() => {
-                    localStorage.removeItem("glareAppUser");
-                    setCurrentUser(null);
-                    setSavedScenarios([]);
-                    setSelectedScenarioIds([]);
-                  }}
-                  className="mt-1 w-full rounded-lg px-2 py-2 text-left text-sm text-slate-700 hover:bg-slate-100"
-                >
-                  Log out
-                </button>
-              </div>
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem("glareAppUser");
+                      setCurrentUser(null);
+                      setSavedScenarios([]);
+                      setSelectedScenarioIds([]);
+                      setUserMenuOpen(false);
+                    }}
+                    className="mt-1 w-full rounded-lg px-2 py-2 text-left text-sm text-slate-700 hover:bg-slate-100"
+                  >
+                    Log out
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
 
-            <div className="mt-4 grid min-h-0 flex-1 grid-cols-[340px_minmax(0,1fr)] gap-4">
+            <div className="mt-4 grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-[340px_minmax(0,1fr)]">
               <section className="min-h-0 overflow-y-auto rounded-2xl border border-slate-900 bg-white">
                 <div className="flex min-h-0 flex-col">
                   <div className="border-b px-4 py-3">
@@ -2774,7 +2782,7 @@ if (!currentUser) {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div
                     ref={frontPreviewRef}
                     className="h-[320px] overflow-hidden rounded-2xl border bg-white p-4 shadow-sm"
@@ -2815,7 +2823,7 @@ if (!currentUser) {
                 </div>
 
                 {result && (
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <MetricCard
                       title="Best Time"
                       value={result.summary.best_time_label ?? "N/A"}
