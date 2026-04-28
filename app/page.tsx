@@ -1513,9 +1513,7 @@ useEffect(() => {
 
         {lines}
 
-        <text x="12" y="18" fontSize="12" fill="black">
-          Elevation
-        </text>
+        
       </svg>
     );
     }, [
@@ -1877,14 +1875,7 @@ useEffect(() => {
 
         {shapes}
 
-        <text x="12" y="18" fontSize="12" fill="black">
-          Top view
-        </text>
-        {timeMode === "full_day" && (
-          <text x="12" y="30" fontSize="9" fill="#6b7280">
-            all day: earliest / noon / latest / max
-          </text>
-        )}
+        
       </svg>
     );
   }, [
@@ -2907,7 +2898,8 @@ if (!currentUser) {
                     ref={frontPreviewRef}
                     className="h-[320px] overflow-hidden rounded-2xl border bg-white p-4 shadow-sm"
                   >
-                    <div className="flex h-full items-center justify-center">
+                    <div className="text-sm font-medium text-slate-700">Elevation</div>
+                    <div className="mt-2 h-[calc(100%-1.75rem)]">
                       {frontPreview}
                     </div>
                   </div>
@@ -2916,7 +2908,11 @@ if (!currentUser) {
                     ref={topPreviewRef}
                     className="h-[320px] overflow-hidden rounded-2xl border bg-white p-4 shadow-sm"
                   >
-                    <div className="flex h-full items-center justify-center">
+                    <div className="text-sm font-medium text-slate-700">Top view</div>
+                    <div className="text-xs text-slate-500">
+                      all day: earliest / noon / latest / max
+                    </div>
+                    <div className="mt-2 h-[calc(100%-2.75rem)]">
                       {topPreview}
                     </div>
                   </div>
