@@ -2905,16 +2905,20 @@ if (!currentUser) {
                 <div className="grid grid-cols-2 gap-4">
                   <div
                     ref={frontPreviewRef}
-                    className="h-[260px] overflow-hidden rounded-2xl border bg-white p-4 shadow-sm"
+                    className="h-[320px] overflow-hidden rounded-2xl border bg-white p-4 shadow-sm"
                   >
-                    {frontPreview}
+                    <div className="flex h-full items-center justify-center">
+                      {frontPreview}
+                    </div>
                   </div>
 
                   <div
                     ref={topPreviewRef}
-                    className="h-[260px] overflow-hidden rounded-2xl border bg-white p-4 shadow-sm"
+                    className="h-[320px] overflow-hidden rounded-2xl border bg-white p-4 shadow-sm"
                   >
-                    {topPreview}
+                    <div className="flex h-full items-center justify-center">
+                      {topPreview}
+                    </div>
                   </div>
                 </div>
 
