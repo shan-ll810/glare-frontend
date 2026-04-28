@@ -1531,326 +1531,166 @@ useEffect(() => {
     verticalSpacing,
   ]);
   
-  const topPreview = useMemo(() => {
-    const w = 320;
-    const h = 240;
-    const pad = 40;
+ const topPreview = useMemo(() => {
+  const w = 320;
+  const h = 240;
+  const pad = 42;
 
-    const innerW = w - pad * 2;
-    const innerH = h - pad * 2;
-    const scale = Math.min(innerW / roomWidth, innerH / roomDepth);
+  const innerW = w - pad * 2;
+  const innerH = h - pad * 2;
+  const scale = Math.min(innerW / roomWidth, innerH / roomDepth);
 
-    const offsetX = (w - roomWidth * scale) / 2;
-    const offsetY = (h - roomDepth * scale) / 2;
+  const offsetX = (w - roomWidth * scale) / 2;
+  const offsetY = (h - roomDepth * scale) / 2;
 
-    const sx = (value: number) => offsetX + value * scale;
-    const sy = (value: number) => offsetY + value * scale;
+  const sx = (value: number) => offsetX + value * scale;
+  const sy = (value: number) => offsetY + value * scale;
 
-    const roomLeft = sx(0);
-    const roomRight = sx(roomWidth);
-    const roomTop = sy(0);
-    const roomBottom = sy(roomDepth);
+  const roomLeft = sx(0);
+  const roomRight = sx(roomWidth);
+  const roomTop = sy(0);
+  const roomBottom = sy(roomDepth);
 
-    const windowLeftVal = clamp(windowOffset, 0, Math.max(0, roomWidth - windowWidth));
-    const windowRightVal = windowLeftVal + windowWidth;
-    const windowCenter = windowLeftVal + windowWidth / 2;
+  const roomCenterX = (roomLeft + roomRight) / 2;
+  const roomCenterY = (roomTop + roomBottom) / 2;
 
-    const shapes: React.ReactNode[] = [];
+  const windowLeftVal = clamp(
+    windowOffset,
+    0,
+    Math.max(0, roomWidth - windowWidth)
+  );
+  const windowRightVal = windowLeftVal + windowWidth;
+  const windowCenter = windowLeftVal + windowWidth / 2;
 
-    const dir = ((orientationDeg % 360) + 360) % 360;
+  const rotationDeg = orientationDeg - 180;
 
-    function topFacadeLine(u0: number, u1: number) {
-      if (dir >= 135 && dir < 225) {
-        // South
-        return {
-          x1: sx(u0),
-          y1: roomTop,
-          x2: sx(u1),
-          y2: roomTop,
-        };
-      }
+  const shapes: React.ReactNode[] = [];
 
-      if (dir >= 315 || dir < 45) {
-        // North
-        return {
-          x1: sx(roomWidth - u0),
-          y1: roomBottom,
-          x2: sx(roomWidth - u1),
-          y2: roomBottom,
-        };
-      }
+  if (hasShading && (shadingType === "horizontal" || shadingType === "eggcrate")) {
+    const depthPx = Math.max(8, horizontalDepth * scale);
 
-      if (dir >= 45 && dir < 135) {
-        // East
-        return {
-          x1: roomRight,
-          y1: sy(u0),
-          x2: roomRight,
-          y2: sy(u1),
-        };
-      }
+    shapes.push(
+      <rect
+        key="h-top"
+        x={sx(windowLeftVal)}
+        y={roomTop - depthPx}
+        width={sx(windowRightVal) - sx(windowLeftVal)}
+        height={depthPx}
+        fill="none"
+        stroke="black"
+        strokeWidth="1.2"
+      />
+    );
+  }
 
-      // West
-      return {
-        x1: roomLeft,
-        y1: sy(roomDepth - u0),
-        x2: roomLeft,
-        y2: sy(roomDepth - u1),
-      };
-    }
+  if (hasShading && (shadingType === "vertical" || shadingType === "eggcrate")) {
+    const depthPx = Math.max(8, verticalDepth * scale);
+    const thick = Math.max(2, shadingThickness * scale);
 
-    if (hasShading && (shadingType === "horizontal" || shadingType === "eggcrate")) {
-      const depthPx = Math.max(8, horizontalDepth * scale);
+    for (let i = 0; i < verticalCount; i++) {
+      const x0 = windowLeftVal + i * verticalSpacing;
+      if (x0 > windowRightVal) break;
 
-      if (dir >= 135 && dir < 225) {
-        // South
-        shapes.push(
-          <rect
-            key="h-top"
-            x={sx(windowLeftVal)}
-            y={roomTop - depthPx}
-            width={sx(windowRightVal) - sx(windowLeftVal)}
-            height={depthPx}
-            fill="none"
-            stroke="black"
-            strokeWidth="1.2"
-          />
-        );
-      } else if (dir >= 315 || dir < 45) {
-        // North
-        shapes.push(
-          <rect
-            key="h-top"
-            x={sx(roomWidth - windowRightVal)}
-            y={roomBottom}
-            width={sx(windowRightVal) - sx(windowLeftVal)}
-            height={depthPx}
-            fill="none"
-            stroke="black"
-            strokeWidth="1.2"
-          />
-        );
-      } else if (dir >= 45 && dir < 135) {
-        // East
-        shapes.push(
-          <rect
-            key="h-top"
-            x={roomRight}
-            y={sy(windowLeftVal)}
-            width={depthPx}
-            height={sy(windowRightVal) - sy(windowLeftVal)}
-            fill="none"
-            stroke="black"
-            strokeWidth="1.2"
-          />
-        );
-      } else {
-        // West
-        shapes.push(
-          <rect
-            key="h-top"
-            x={roomLeft - depthPx}
-            y={sy(roomDepth - windowRightVal)}
-            width={depthPx}
-            height={sy(roomDepth - windowLeftVal) - sy(roomDepth - windowRightVal)}
-            fill="none"
-            stroke="black"
-            strokeWidth="1.2"
-          />
-        );
-      }
-    }
-
-    if (hasShading && (shadingType === "vertical" || shadingType === "eggcrate")) {
-      const depthPx = Math.max(8, verticalDepth * scale);
-      const thick = Math.max(2, shadingThickness * scale);
-
-      for (let i = 0; i < verticalCount; i++) {
-        const x0 = windowLeftVal + i * verticalSpacing;
-        if (x0 > windowRightVal) break;
-
-        if (dir >= 135 && dir < 225) {
-          // South
-          shapes.push(
-            <rect
-              key={`vt-${i}`}
-              x={sx(x0)}
-              y={roomTop - depthPx}
-              width={thick}
-              height={depthPx}
-              fill="none"
-              stroke="black"
-              strokeWidth="1.2"
-            />
-          );
-        } else if (dir >= 315 || dir < 45) {
-          // North
-          shapes.push(
-            <rect
-              key={`vt-${i}`}
-              x={sx(roomWidth - x0) - thick}
-              y={roomBottom}
-              width={thick}
-              height={depthPx}
-              fill="none"
-              stroke="black"
-              strokeWidth="1.2"
-            />
-          );
-        } else if (dir >= 45 && dir < 135) {
-          // East
-          shapes.push(
-            <rect
-              key={`vt-${i}`}
-              x={roomRight}
-              y={sy(x0)}
-              width={depthPx}
-              height={thick}
-              fill="none"
-              stroke="black"
-              strokeWidth="1.2"
-            />
-          );
-        } else {
-          // West
-          shapes.push(
-            <rect
-              key={`vt-${i}`}
-              x={roomLeft - depthPx}
-              y={sy(roomDepth - x0) - thick}
-              width={depthPx}
-              height={thick}
-              fill="none"
-              stroke="black"
-              strokeWidth="1.2"
-            />
-          );
-        }
-      }
-    }
-
-    const activeHour = displayHour;
-    const singlePatch = computeSunPatchAtHour(activeHour, hasShading);
-
-    const patchShapes: React.ReactNode[] = [];
-    const penetrationGraphics: React.ReactNode[] = [];
-
-    if (timeMode === "full_day" && daylightHours.length > 0) {
-      const total = daylightHours.length;
-
-      daylightHours.forEach((item, idx) => {
-        if (!item.patch) return;
-        const p = item.patch;
-
-        if (p.hullPoints.length >= 3) {
-          const opacity = 0.18 + (idx / Math.max(1, total - 1)) * 0.42;
-
-          patchShapes.push(
-            <polygon
-              key={`plan-poly-${idx}`}
-              points={p.hullPoints.map((pt) => `${sx(pt.x)},${sy(pt.y)}`).join(" ")}
-              fill={SHADOW_FILL}
-              opacity={opacity}
-            />
-          );
-        }
-      });
-
-      const visible = [...daylightHours].sort((a, b) => a.hour - b.hour);
-      const earliest = visible[0];
-      const latest = visible[visible.length - 1];
-      const noon = visible.find((d) => d.hour === 12) ?? null;
-      const maxItem = visible.reduce((max, item) =>
-        item.penetration > max.penetration ? item : max
+      shapes.push(
+        <rect
+          key={`vt-${i}`}
+          x={sx(x0)}
+          y={roomTop - depthPx}
+          width={thick}
+          height={depthPx}
+          fill="none"
+          stroke="black"
+          strokeWidth="1.2"
+        />
       );
+    }
+  }
 
-      const selectedMarkers = [earliest, noon, latest, maxItem]
-        .filter(Boolean)
-        .filter(
-          (item, index, arr) =>
-            arr.findIndex((d) => d?.hour === item?.hour) === index
-        );
+  const activeHour = displayHour;
+  const singlePatch = computeSunPatchAtHour(activeHour, hasShading);
 
-      selectedMarkers.forEach((item, idx) => {
-        if (!item) return;
+  const patchShapes: React.ReactNode[] = [];
+  const penetrationGraphics: React.ReactNode[] = [];
 
-        const lineEnd = Math.min(roomDepth, item.penetration);
-        const y = sy(lineEnd);
+  if (timeMode === "full_day" && daylightHours.length > 0) {
+    const total = daylightHours.length;
 
-        const markerHalf = item.hour === maxItem.hour ? 18 : 12;
-        const x1 = sx(windowCenter) - markerHalf;
-        const x2 = sx(windowCenter) + markerHalf;
-        const labelOffsetY = [-8, 12, -14, 18][idx] ?? (idx % 2 === 0 ? -8 : 12);
-        const isMax = item.hour === maxItem.hour;
+    daylightHours.forEach((item, idx) => {
+      if (!item.patch) return;
+      const p = item.patch;
 
-        penetrationGraphics.push(
-          <g key={`pen-marker-${item.hour}`}>
-            <line
-              x1={x1}
-              y1={y}
-              x2={x2}
-              y2={y}
-              stroke="#6b7280"
-              strokeWidth={isMax ? "2.2" : "1.3"}
-              strokeDasharray={isMax ? "none" : "4 3"}
-              opacity={0.95}
-            />
-            <text
-              x={x2 + 12}
-              y={y + labelOffsetY}
-              fontSize="9"
-              fill="#4b5563"
-              opacity={0.98}
-            >
-              {isMax ? `${item.label} max` : item.label}
-            </text>
-          </g>
-        );
-      });
-    } else if (singlePatch) {
-      if (singlePatch.hullPoints.length >= 3) {
+      if (p.hullPoints.length >= 3) {
+        const opacity = 0.18 + (idx / Math.max(1, total - 1)) * 0.42;
+
         patchShapes.push(
           <polygon
-            key="plan-patch-main"
-            points={singlePatch.hullPoints
-              .map((pt) => `${sx(pt.x)},${sy(pt.y)}`)
-              .join(" ")}
+            key={`plan-poly-${idx}`}
+            points={p.hullPoints.map((pt) => `${sx(pt.x)},${sy(pt.y)}`).join(" ")}
             fill={SHADOW_FILL}
-            opacity={SHADOW_OPACITY}
+            opacity={opacity}
           />
         );
       }
+    });
 
-      if (maxPenetrationInfo && maxPenetrationInfo.value > 0) {
-        const lineEnd = Math.min(roomDepth, singlePatch.maxPenetration);
-        penetrationGraphics.push(
-          <g key="single-pen">
-            <line
-              x1={sx(windowCenter)}
-              y1={sy(0)}
-              x2={sx(windowCenter)}
-              y2={sy(lineEnd)}
-              stroke="#6b7280"
-              strokeWidth="2"
-              strokeDasharray="6 4"
-            />
-            <text
-              x={sx(windowCenter) + 8}
-              y={sy(lineEnd) - 6}
-              fontSize="10"
-              fill="#4b5563"
-            >
-              {singlePatch.maxPenetration.toFixed(1)} ft @ {displayHour}:00
-            </text>
-          </g>
-        );
-      }
+    const visible = [...daylightHours].sort((a, b) => a.hour - b.hour);
+    const earliest = visible[0];
+    const latest = visible[visible.length - 1];
+    const noon = visible.find((d) => d.hour === 12) ?? null;
+    const maxItem = visible.reduce((max, item) =>
+      item.penetration > max.penetration ? item : max
+    );
+
+    const selectedMarkers = [earliest, noon, latest, maxItem]
+      .filter(Boolean)
+      .filter(
+        (item, index, arr) =>
+          arr.findIndex((d) => d?.hour === item?.hour) === index
+      );
+
+    selectedMarkers.forEach((item, idx) => {
+      if (!item) return;
+
+      const lineEnd = Math.min(roomDepth, item.penetration);
+      const y = sy(lineEnd);
+      const markerHalf = item.hour === maxItem.hour ? 18 : 12;
+      const x1 = sx(windowCenter) - markerHalf;
+      const x2 = sx(windowCenter) + markerHalf;
+      const isMax = item.hour === maxItem.hour;
+
+      penetrationGraphics.push(
+        <g key={`pen-marker-${item.hour}`}>
+          <line
+            x1={x1}
+            y1={y}
+            x2={x2}
+            y2={y}
+            stroke="#6b7280"
+            strokeWidth={isMax ? "2.2" : "1.3"}
+            strokeDasharray={isMax ? "none" : "4 3"}
+            opacity={0.95}
+          />
+        </g>
+      );
+    });
+  } else if (singlePatch) {
+    if (singlePatch.hullPoints.length >= 3) {
+      patchShapes.push(
+        <polygon
+          key="plan-patch-main"
+          points={singlePatch.hullPoints
+            .map((pt) => `${sx(pt.x)},${sy(pt.y)}`)
+            .join(" ")}
+          fill={SHADOW_FILL}
+          opacity={SHADOW_OPACITY}
+        />
+      );
     }
+  }
 
-    const windowLine = topFacadeLine(windowLeftVal, windowRightVal);
-
-    return (
-      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-full object-contain">
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-full object-contain">
+      <g transform={`rotate(${rotationDeg} ${roomCenterX} ${roomCenterY})`}>
         <rect
           x={roomLeft}
           y={roomTop}
@@ -1865,40 +1705,36 @@ useEffect(() => {
         {penetrationGraphics}
 
         <line
-          x1={windowLine.x1}
-          y1={windowLine.y1}
-          x2={windowLine.x2}
-          y2={windowLine.y2}
+          x1={sx(windowLeftVal)}
+          y1={roomTop}
+          x2={sx(windowRightVal)}
+          y2={roomTop}
           stroke="black"
           strokeWidth="2"
         />
 
         {shapes}
-
-        
-      </svg>
-    );
-  }, [
-    roomWidth,
-    roomDepth,
-    analysisHeight,
-    windowWidth,
-    windowOffset,
-    hasShading,
-    shadingType,
-    horizontalDepth,
-    verticalDepth,
-    horizontalCount,
-    verticalCount,
-    horizontalSpacing,
-    verticalSpacing,
-    shadingThickness,
-    displayHour,
-    maxPenetrationInfo,
-    daylightHours,
-    timeMode,
-    orientationDeg,
-  ]);
+      </g>
+    </svg>
+  );
+}, [
+  roomWidth,
+  roomDepth,
+  analysisHeight,
+  windowWidth,
+  windowOffset,
+  hasShading,
+  shadingType,
+  horizontalDepth,
+  verticalDepth,
+  verticalCount,
+  verticalSpacing,
+  shadingThickness,
+  displayHour,
+  daylightHours,
+  timeMode,
+  orientationDeg,
+]);
 
   const box3DPreview = useMemo(() => {
     const w = 920;
