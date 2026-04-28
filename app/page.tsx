@@ -718,20 +718,22 @@ function OrientationDial({
     };
   }
 
-  function eventToDeg(
-    e: React.MouseEvent<SVGSVGElement> | React.PointerEvent<SVGSVGElement>
-  ) {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+ function eventToDeg(
+  e: React.MouseEvent<SVGElement> | React.PointerEvent<SVGElement>
+) {
+  const svg = e.currentTarget.ownerSVGElement ?? e.currentTarget;
+  const rect = svg.getBoundingClientRect();
 
-    const dx = x - cx;
-    const dy = y - cy;
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
 
-    const rad = Math.atan2(dy, dx);
-    const deg = (rad * 180) / Math.PI + 90;
-    return normalize360(deg);
-  }
+  const dx = x - cx;
+  const dy = y - cy;
+
+  const rad = Math.atan2(dy, dx);
+  const deg = (rad * 180) / Math.PI + 90;
+  return normalize360(deg);
+}
 
   const p = pointerFromDeg(value);
 
