@@ -57,6 +57,12 @@ type SavedScenario = {
   };
   result: AnalyzeResponse;
 };
+
+type AppUser = {
+  name: string;
+  email: string;
+};
+
 type Pt2 = { x: number; y: number };
 
 type SunPatchResult = {
@@ -871,25 +877,54 @@ export default function Page() {
 
   const [mounted, setMounted] = useState(false);
 
+  const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
+  const [loginName, setLoginName] = useState("");
+  const [loginEmail, setLoginEmail] = useState("");
+
   const [orientationDeg, setOrientationDeg] = useState(180);
+
+  const scenarioStorageKey = currentUser
+    ? `savedScenarios:${currentUser.email.toLowerCase()}`
+    : null;
 
   useEffect(() => {
   setMounted(true);
 
   if (typeof window === "undefined") return;
 
-  const raw = localStorage.getItem("savedScenarios");
-  if (!raw) return;
+  const rawUser = localStorage.getItem("glareAppUser");
+  if (!rawUser) return;
 
   try {
-    const parsed = JSON.parse(raw);
+    const parsedUser = JSON.parse(rawUser);
+    if (parsedUser?.name && parsedUser?.email) {
+      setCurrentUser(parsedUser);
+      setLoginName(parsedUser.name);
+      setLoginEmail(parsedUser.email);
+    }
+  } catch (e) {
+    console.error("Failed to load glare app user:", e);
+  }
+}, []);
+
+useEffect(() => {
+  if (typeof window === "undefined") return;
+  if (!scenarioStorageKey) return;
+
+  const raw = localStorage.getItem(scenarioStorageKey);
+
+  try {
+    const parsed = raw ? JSON.parse(raw) : [];
     if (Array.isArray(parsed)) {
       setSavedScenarios(parsed);
+      setSelectedScenarioIds([]);
     }
   } catch (e) {
     console.error("Failed to load saved scenarios from localStorage:", e);
+    setSavedScenarios([]);
+    setSelectedScenarioIds([]);
   }
-}, []);
+}, [scenarioStorageKey]);
 
   const [scenarioName, setScenarioName] = useState("");
   const [savedScenarios, setSavedScenarios] = useState<SavedScenario[]>([]);
@@ -1049,8 +1084,9 @@ export default function Page() {
 
     setSavedScenarios((prev) => {
       const updated = [newScenario, ...prev];
-      if (typeof window !== "undefined") {
-        localStorage.setItem("savedScenarios", JSON.stringify(updated));
+      if (typeof window !== "undefined") 
+      if (scenarioStorageKey) {
+        localStorage.setItem(scenarioStorageKey, JSON.stringify(updated));
       }
       return updated;
     });
@@ -1072,8 +1108,9 @@ export default function Page() {
   function deleteScenario(id: string) {
     setSavedScenarios((prev) => {
       const updated = prev.filter((s) => s.id !== id);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("savedScenarios", JSON.stringify(updated));
+      if (typeof window !== "undefined") 
+      if (scenarioStorageKey) {
+        localStorage.setItem(scenarioStorageKey, JSON.stringify(updated));
       }
       return updated;
     });
@@ -1449,6 +1486,61 @@ export default function Page() {
       />
     );
   }
+}
+if (!currentUser) {
+  return (
+    <main className="min-h-screen bg-slate-50 p-8">
+      <div className="mx-auto mt-24 max-w-md rounded-3xl border bg-white p-8 shadow-sm">
+        <h1 className="text-2xl font-semibold text-slate-900">
+          Glare Analysis App
+        </h1>
+
+        <p className="mt-2 text-sm text-slate-500">
+          Enter your name and email to keep saved scenarios separate on this device.
+        </p>
+
+        <label className="mt-6 block">
+          <div className="mb-1 text-sm text-slate-600">Name</div>
+          <input
+            value={loginName}
+            onChange={(e) => setLoginName(e.target.value)}
+            className="w-full rounded-xl border border-slate-300 px-3 py-2 outline-none focus:border-slate-500"
+            placeholder="Your name"
+          />
+        </label>
+
+        <label className="mt-4 block">
+          <div className="mb-1 text-sm text-slate-600">Email</div>
+          <input
+            type="email"
+            value={loginEmail}
+            onChange={(e) => setLoginEmail(e.target.value)}
+            className="w-full rounded-xl border border-slate-300 px-3 py-2 outline-none focus:border-slate-500"
+            placeholder="you@example.com"
+          />
+        </label>
+
+        <button
+          onClick={() => {
+            const name = loginName.trim();
+            const email = loginEmail.trim().toLowerCase();
+
+            if (!name || !email.includes("@")) {
+              alert("Please enter a valid name and email.");
+              return;
+            }
+
+            const user = { name, email };
+            localStorage.setItem("glareAppUser", JSON.stringify(user));
+            setCurrentUser(user);
+          }}
+          className="mt-6 w-full rounded-xl bg-slate-900 px-4 py-2 text-white hover:bg-slate-800"
+        >
+          Continue
+        </button>
+      </div>
+    </main>
+  );
 }
 
     return (
