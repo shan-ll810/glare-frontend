@@ -548,7 +548,7 @@ function ScenarioLineChart({
       : "Max Penetration (ft)";
 
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto">
+    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-full object-contain">
       <rect x="0" y="0" width={w} height={h} fill="white" />
 
       {tickValues.map((v, i) => {
@@ -1490,7 +1490,7 @@ useEffect(() => {
 
 
     return (
-      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto">
+      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-full object-contain">
         <rect
           x={wallLeft}
           y={wallTop}
@@ -1852,7 +1852,7 @@ useEffect(() => {
     const windowLine = topFacadeLine(windowLeftVal, windowRightVal);
 
     return (
-      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto">
+      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-full object-contain">
         <rect
           x={roomLeft}
           y={roomTop}
@@ -2306,7 +2306,7 @@ useEffect(() => {
     const domeRingPoints = groundDomeRingPoints(domeRadius);
 
     return (
-      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto">
+      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-full object-contain">
         {faces.map((face, i) => (
           <polygon
             key={i}
@@ -2848,7 +2848,7 @@ if (!currentUser) {
               </section>
 
               <section className="min-h-0 overflow-y-auto rounded-2xl border border-slate-900 bg-white p-4 space-y-6">
-                <div className="rounded-2xl border bg-white p-4 shadow-sm">
+                <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() =>
                       exportSvgContainerAsPng(
