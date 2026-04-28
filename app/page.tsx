@@ -1487,61 +1487,7 @@ useEffect(() => {
     );
   }
 }
-if (!currentUser) {
-  return (
-    <main className="min-h-screen bg-slate-50 p-8">
-      <div className="mx-auto mt-24 max-w-md rounded-3xl border bg-white p-8 shadow-sm">
-        <h1 className="text-2xl font-semibold text-slate-900">
-          Glare Analysis App
-        </h1>
 
-        <p className="mt-2 text-sm text-slate-500">
-          Enter your name and email to keep saved scenarios separate on this device.
-        </p>
-
-        <label className="mt-6 block">
-          <div className="mb-1 text-sm text-slate-600">Name</div>
-          <input
-            value={loginName}
-            onChange={(e) => setLoginName(e.target.value)}
-            className="w-full rounded-xl border border-slate-300 px-3 py-2 outline-none focus:border-slate-500"
-            placeholder="Your name"
-          />
-        </label>
-
-        <label className="mt-4 block">
-          <div className="mb-1 text-sm text-slate-600">Email</div>
-          <input
-            type="email"
-            value={loginEmail}
-            onChange={(e) => setLoginEmail(e.target.value)}
-            className="w-full rounded-xl border border-slate-300 px-3 py-2 outline-none focus:border-slate-500"
-            placeholder="you@example.com"
-          />
-        </label>
-
-        <button
-          onClick={() => {
-            const name = loginName.trim();
-            const email = loginEmail.trim().toLowerCase();
-
-            if (!name || !email.includes("@")) {
-              alert("Please enter a valid name and email.");
-              return;
-            }
-
-            const user = { name, email };
-            localStorage.setItem("glareAppUser", JSON.stringify(user));
-            setCurrentUser(user);
-          }}
-          className="mt-6 w-full rounded-xl bg-slate-900 px-4 py-2 text-white hover:bg-slate-800"
-        >
-          Continue
-        </button>
-      </div>
-    </main>
-  );
-}
 
     return (
       <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto">
@@ -2533,6 +2479,62 @@ if (!currentUser) {
   e.preventDefault();
   const delta = e.deltaY > 0 ? -0.12 : 0.12;
   setPreviewZoom((prev) => Math.max(0.32, Math.min(2.8, prev + delta)));
+}
+
+if (!currentUser) {
+  return (
+    <main className="min-h-screen bg-slate-50 p-8">
+      <div className="mx-auto mt-24 max-w-md rounded-3xl border bg-white p-8 shadow-sm">
+        <h1 className="text-2xl font-semibold text-slate-900">
+          Glare Analysis App
+        </h1>
+
+        <p className="mt-2 text-sm text-slate-500">
+          Enter your name and email to keep saved scenarios separate on this device.
+        </p>
+
+        <label className="mt-6 block">
+          <div className="mb-1 text-sm text-slate-600">Name</div>
+          <input
+            value={loginName}
+            onChange={(e) => setLoginName(e.target.value)}
+            className="w-full rounded-xl border border-slate-300 px-3 py-2 outline-none focus:border-slate-500"
+            placeholder="Your name"
+          />
+        </label>
+
+        <label className="mt-4 block">
+          <div className="mb-1 text-sm text-slate-600">Email</div>
+          <input
+            type="email"
+            value={loginEmail}
+            onChange={(e) => setLoginEmail(e.target.value)}
+            className="w-full rounded-xl border border-slate-300 px-3 py-2 outline-none focus:border-slate-500"
+            placeholder="you@example.com"
+          />
+        </label>
+
+        <button
+          onClick={() => {
+            const name = loginName.trim();
+            const email = loginEmail.trim().toLowerCase();
+
+            if (!name || !email.includes("@")) {
+              alert("Please enter a valid name and email.");
+              return;
+            }
+
+            const user = { name, email };
+            localStorage.setItem("glareAppUser", JSON.stringify(user));
+            setCurrentUser(user);
+          }}
+          className="mt-6 w-full rounded-xl bg-slate-900 px-4 py-2 text-white hover:bg-slate-800"
+        >
+          Continue
+        </button>
+      </div>
+    </main>
+  );
 }
 
   return (
