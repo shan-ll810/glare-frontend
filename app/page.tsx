@@ -3057,6 +3057,12 @@ if (!currentUser) {
                                   {scenario.inputs.windowHeight}h
                                 </div>
                               </div>
+                              <div>
+                                <div className="text-slate-500">Plane Height</div>
+                                <div className="font-medium">
+                                  {scenario.inputs.analysisHeight} ft
+                                </div>
+                              </div>
                             </div>
 
                             {scenario.inputs.hasShading && (
