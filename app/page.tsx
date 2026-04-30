@@ -1853,11 +1853,25 @@ useEffect(() => {
     const winOffsetX =
       clamp(windowOffset, 0, Math.max(0, roomWidth - windowWidth)) * zoom;
 
-    function project(x: number, y: number, z: number) {
-      const theta = degToRad(orientationDeg);
+    function projectWorld(x: number, y: number, z: number) {
+      const cosA = Math.cos(yaw);
+      const sinA = Math.sin(yaw);
 
-      const cx = (roomWidth * zoom) / 2;
-      const cy = (roomDepth * zoom * roomScaleY) / 2;
+      const rx = x * cosA - y * sinA;
+      const ry = x * sinA + y * cosA;
+
+      return {
+        x: originX + rx,
+        y: originY + ry * 0.4 - z,
+        depth: ry,
+      };
+    }
+
+    function projectRoom(x: number, y: number, z: number) {
+      const theta = degToRad(orientationDeg - 180);
+
+      const cx = roomX / 2;
+      const cy = roomY / 2;
 
       const dx = x - cx;
       const dy = y - cy;
@@ -1865,21 +1879,7 @@ useEffect(() => {
       const rx = dx * Math.cos(theta) - dy * Math.sin(theta);
       const ry = dx * Math.sin(theta) + dy * Math.cos(theta);
 
-      x = cx + rx;
-      y = cy + ry;
-
-      // 👇 原来的 camera rotation（只控制视角）
-      const cosA = Math.cos(yaw);
-      const sinA = Math.sin(yaw);
-
-      const rrx = x * cosA - y * sinA;
-      const rry = x * sinA + y * cosA;
-
-      return {
-        x: originX + rrx,
-        y: originY + rry * 0.4 - z,
-        depth: rry,
-      };
+      return projectWorld(cx + rx, cy + ry, z);
     }
 
     function pts(p: { x: number; y: number }[]) {
@@ -1894,7 +1894,7 @@ useEffect(() => {
     function facadePoint(u: number, outwardDepth: number, z: number) {
       // Keep everything on the local front facade.
       // The whole room is already rotated by yaw = previewRotate + orientationDeg.
-      return project(u, 0 - outwardDepth, z);
+      return projectRoom(u, 0 - outwardDepth, z);
     }
     function worldToPreviewSun(
       altitudeDegLocal: number,
@@ -1907,7 +1907,7 @@ useEffect(() => {
       const py = (domeCenterY - sun.y * radius * roomScaleY) * zoom;
       const pz = (domeCenterZ + sun.z * radius * roomScaleZ) * zoom;
 
-      return project(px, py, pz);
+      return projectWorld(px, py, pz);
     }
 
     function seasonalSunPath(dateKey: "03-21" | "06-21" | "12-21") {
@@ -1936,7 +1936,7 @@ useEffect(() => {
         const t = (i / 120) * Math.PI * 2;
         const gx = domeCenterX + Math.sin(t) * radius;
         const gy = domeCenterY + Math.cos(t) * radius * 0.72;
-        const p = project(gx * zoom, gy * zoom * roomScaleY, 0);
+        const p = projectWorld(gx * zoom, gy * zoom * roomScaleY, 0);
         pts3d.push({
           x: Number(p.x.toFixed(2)),
           y: Number(p.y.toFixed(2)),
@@ -1960,19 +1960,19 @@ useEffect(() => {
       const azRad = degToRad(azimuthDegLocal);
       const gx = roomWidth / 2 + Math.sin(azRad) * radius;
       const gy = roomDepth * 0.55 + Math.cos(azRad) * radius * 0.72;
-      return project(gx * zoom, gy * zoom * roomScaleY, 0);
+      return projectWorld(gx * zoom, gy * zoom * roomScaleY, 0);
     }
 
     // Room box stays as-is
-    const A = project(0, 0, 0);
-    const B = project(roomX, 0, 0);
-    const C = project(roomX, roomY, 0);
-    const D = project(0, roomY, 0);
+    const A = projectRoom(0, 0, 0);
+    const B = projectRoom(roomX, 0, 0);
+    const C = projectRoom(roomX, roomY, 0);
+    const D = projectRoom(0, roomY, 0);
 
-    const A1 = project(0, 0, roomZ);
-    const B1 = project(roomX, 0, roomZ);
-    const C1 = project(roomX, roomY, roomZ);
-    const D1 = project(0, roomY, roomZ);
+    const A1 = projectRoom(0, 0, roomZ);
+    const B1 = projectRoom(roomX, 0, roomZ);
+    const C1 = projectRoom(roomX, roomY, roomZ);
+    const D1 = projectRoom(0, roomY, roomZ);
 
     // Window now actually moves to the oriented facade
     const W1 = facadePoint(winOffsetX, 0, sill);
@@ -1998,8 +1998,8 @@ useEffect(() => {
     const gridStep = 2;
 
     for (let x = 0; x <= roomWidth; x += gridStep) {
-      const p1 = project(x * zoom, 0, analysisZ);
-      const p2 = project(x * zoom, roomY, analysisZ);
+      const p1 = projectRoom(x * zoom, 0, analysisZ);
+      const p2 = projectRoom(x * zoom, roomY, analysisZ);
       gridLines3D.push(
         <line
           key={`grid-x-${x}`}
@@ -2015,8 +2015,8 @@ useEffect(() => {
     }
 
     for (let y = 0; y <= roomDepth; y += gridStep) {
-      const p1 = project(0, y * zoom * roomScaleY, analysisZ);
-      const p2 = project(roomX, y * zoom * roomScaleY, analysisZ);
+      const p1 = projectRoom(0, y * zoom * roomScaleY, analysisZ);
+      const p2 = projectRoom(roomX, y * zoom * roomScaleY, analysisZ);
       gridLines3D.push(
         <line
           key={`grid-y-${y}`}
@@ -2031,15 +2031,15 @@ useEffect(() => {
       );
     }
 
-    const planeA = project(0, 0, analysisZ);
-    const planeB = project(roomX, 0, analysisZ);
-    const planeC = project(roomX, roomY, analysisZ);
-    const planeD = project(0, roomY, analysisZ);
+    const planeA = projectRoom(0, 0, analysisZ);
+    const planeB = projectRoom(roomX, 0, analysisZ);
+    const planeC = projectRoom(roomX, roomY, analysisZ);
+    const planeD = projectRoom(0, roomY, analysisZ);
 
     const patchShapes: React.ReactNode[] = [];
     if (patch && patch.hullPoints.length >= 3) {
       const poly3d = patch.hullPoints.map((pt) =>
-        project(pt.x * zoom, pt.y * zoom * roomScaleY, analysisZ)
+        projectRoom(pt.x * zoom, pt.y * zoom * roomScaleY, analysisZ)
       );
 
       patchShapes.push(
@@ -2063,7 +2063,7 @@ useEffect(() => {
 
         const points = item.patch.hullPoints
           .map((pt) => {
-            const p = project(pt.x * zoom, pt.y * zoom * roomScaleY, analysisZ);
+            const p = projectRoom(pt.x * zoom, pt.y * zoom * roomScaleY, analysisZ);
             return `${p.x},${p.y}`;
           })
           .join(" ");
