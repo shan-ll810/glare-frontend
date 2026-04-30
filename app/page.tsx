@@ -1877,25 +1877,9 @@ useEffect(() => {
 
     // Rotate facade geometry itself to the correct wall
     function facadePoint(u: number, outwardDepth: number, z: number) {
-      const dir = ((orientationDeg % 360) + 360) % 360;
-
-      if (dir >= 135 && dir < 225) {
-        // South
-        return project(u, 0 - outwardDepth, z);
-      }
-
-      if (dir >= 315 || dir < 45) {
-        // North
-        return project(roomX - u, roomY + outwardDepth, z);
-      }
-
-      if (dir >= 45 && dir < 135) {
-        // East
-        return project(roomX + outwardDepth, u, z);
-      }
-
-      // West
-      return project(0 - outwardDepth, roomY - u, z);
+      // Keep everything on the local front facade.
+      // The whole room is already rotated by yaw = previewRotate + orientationDeg.
+      return project(u, 0 - outwardDepth, z);
     }
     function worldToPreviewSun(
       altitudeDegLocal: number,
@@ -2090,8 +2074,8 @@ useEffect(() => {
 
     // Horizontal shading
     if (hasShading && (shadingType === "horizontal" || shadingType === "eggcrate")) {
-      const x0 = ((roomWidth - windowWidth) / 2) * zoom;
-      const x1 = ((roomWidth + windowWidth) / 2) * zoom;
+      const x0 = winOffsetX;
+      const x1 = winOffsetX + winW;
 
       for (let i = 0; i < horizontalCount; i++) {
         const zTopFt = sillHeight + windowHeight - i * horizontalSpacing;
@@ -2153,9 +2137,12 @@ useEffect(() => {
     // Vertical shading
     if (hasShading && (shadingType === "vertical" || shadingType === "eggcrate")) {
       for (let i = 0; i < verticalCount; i++) {
-        const x0Ft = (roomWidth - windowWidth) / 2 + i * verticalSpacing;
-        const x1Ft = Math.min(x0Ft + shadingThickness, (roomWidth + windowWidth) / 2);
-        if (x0Ft >= (roomWidth + windowWidth) / 2) break;
+        const windowLeftFt = clamp(windowOffset, 0, Math.max(0, roomWidth - windowWidth));
+        const windowRightFt = windowLeftFt + windowWidth;
+
+        const x0Ft = windowLeftFt + i * verticalSpacing;
+        const x1Ft = Math.min(x0Ft + shadingThickness, windowRightFt);
+        if (x0Ft >= windowRightFt) break;
 
         const x0 = x0Ft * zoom;
         const x1 = x1Ft * zoom;
