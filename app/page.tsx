@@ -548,6 +548,13 @@ function ScenarioLineChart({
       ? "Coverage (%)"
       : "Max Penetration (ft)";
 
+  const [hoveredPoint, setHoveredPoint] = useState<{
+    x: number;
+    y: number;
+    text: string;
+  } | null>(null);
+  
+
   return (
     <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-full object-contain">
       <rect x="0" y="0" width={w} height={h} fill="white" />
@@ -640,21 +647,26 @@ function ScenarioLineChart({
                 key={`${s.id}-${hour}`}
                 cx={xAt(hour)}
                 cy={yAt(s.values[i])}
-                r="5"
+                r="6"
                 fill={color}
                 stroke="white"
                 strokeWidth="1.5"
-              >
-                <title>
-                  {`${s.name}
-              Time: ${hour}:00
-              ${yAxisLabel}: ${
+                className="cursor-pointer"
+                onMouseEnter={() => {
+                  const valueText =
                     metric === "coverage_ratio"
                       ? `${s.values[i].toFixed(1)}%`
-                      : `${s.values[i].toFixed(2)}`
-                  }`}
-                </title>
-              </circle>
+                      : `${s.values[i].toFixed(2)}`;
+
+                  setHoveredPoint({
+                    x: xAt(hour),
+                    y: yAt(s.values[i]),
+                    text: `${s.name} · ${hour}:00 · ${valueText}`,
+                  });
+                }}
+                onMouseLeave={() => setHoveredPoint(null)}
+              />
+            
             ))}
           </g>
         );
