@@ -1904,7 +1904,7 @@ useEffect(() => {
       const sun = sunVectorWorld(altitudeDegLocal, azimuthDegLocal);
 
       const px = (domeCenterX + sun.x * radius) * zoom;
-      const py = (domeCenterY - sun.y * radius * roomScaleY) * zoom;
+      const py = (domeCenterY + sun.y * radius * roomScaleY) * zoom;
       const pz = (domeCenterZ + sun.z * radius * roomScaleZ) * zoom;
 
       return projectWorld(px, py, pz);
