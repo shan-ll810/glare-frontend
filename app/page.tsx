@@ -2438,42 +2438,23 @@ if (!currentUser) {
               return;
             }
 
-            // 先查有没有这个用户
-            const { data: existingUser, error: fetchError } = await supabase
-              .from("users")
-              .select("*")
-              .eq("email", email)
-              .maybeSingle();
+            const user = { name, email };
 
-            let userData;
+            // 先让用户进入 app
+            localStorage.setItem("glareAppUser", JSON.stringify(user));
+            setCurrentUser(user);
 
-            if (existingUser) {
-              // 已存在 → 用旧的
-              userData = existingUser;
-            } else {
-              // 不存在 → 创建新的
-              const { data: newUser, error: insertError } = await supabase
-                .from("users")
-                .insert([
-                  {
-                    name,
-                    email,
-                  },
-                ])
-                .select()
-                .single();
+            // 再尝试写数据库，不影响进入 app
+            const { error } = await supabase.from("users").insert([
+              {
+                name,
+                email,
+              },
+            ]);
 
-              if (insertError) {
-                console.error("Failed to create user:", insertError.message);
-                return;
-              }
-
-              userData = newUser;
+            if (error) {
+              console.error("Failed to save user:", error.message);
             }
-
-            // 存本地 + 设置当前用户
-            localStorage.setItem("glareAppUser", JSON.stringify(userData));
-            setCurrentUser(userData);
           }}
           className="mt-6 w-full rounded-xl bg-slate-900 px-4 py-2 text-white hover:bg-slate-800"
         >
