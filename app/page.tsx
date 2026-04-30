@@ -710,6 +710,22 @@ function ScenarioLineChart({
           );
         })}
       </g>
+      {hoveredPoint && (
+        <g transform={`translate(${hoveredPoint.x + 10}, ${hoveredPoint.y - 28})`}>
+          <rect
+            x="0"
+            y="0"
+            width="170"
+            height="28"
+            rx="6"
+            fill="white"
+            stroke="#94a3b8"
+          />
+          <text x="10" y="18" fontSize="11" fill="#334155">
+            {hoveredPoint.text}
+          </text>
+        </g>
+      )}
     </svg>
   );
 }
