@@ -1958,7 +1958,7 @@ useEffect(() => {
 
     function groundCompassPoint(azimuthDegLocal: number, radius: number) {
       const azRad = degToRad(azimuthDegLocal);
-      const gx = roomWidth / 2 + Math.sin(azRad) * radius;
+      const gx = roomWidth / 2 - Math.sin(azRad) * radius;
       const gy = roomDepth * 0.55 + Math.cos(azRad) * radius * 0.72;
       return projectWorld(gx * zoom, gy * zoom * roomScaleY, 0);
     }
