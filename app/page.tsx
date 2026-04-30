@@ -2605,14 +2605,49 @@ if (!currentUser) {
                         step={0.5}
                         min={0}
                       />
-                      <NumberInput
-                        label="Window Offset from Left (ft)"
-                        value={windowOffset}
-                        setValue={setWindowOffset}
-                        step={0.5}
-                        min={0}
-                        max={Math.max(0, roomWidth - windowWidth)}
-                      />
+                      <div className="mt-3">
+                        <NumberInput
+                          label={`Window Offset from Left (ft) · max ${Math.max(
+                            0,
+                            roomWidth - windowWidth
+                          ).toFixed(1)} ft`}
+                          value={windowOffset}
+                          setValue={(v) =>
+                            setWindowOffset(clamp(v, 0, Math.max(0, roomWidth - windowWidth)))
+                          }
+                          step={0.5}
+                          min={0}
+                          max={Math.max(0, roomWidth - windowWidth)}
+                        />
+
+                        <div className="mt-2 grid grid-cols-3 gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setWindowOffset(0)}
+                            className="rounded-lg border bg-white px-2 py-1 text-xs text-slate-700 hover:bg-slate-100"
+                          >
+                            Left
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setWindowOffset(Math.max(0, (roomWidth - windowWidth) / 2))
+                            }
+                            className="rounded-lg border bg-white px-2 py-1 text-xs text-slate-700 hover:bg-slate-100"
+                          >
+                            Center
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setWindowOffset(Math.max(0, roomWidth - windowWidth))}
+                            className="rounded-lg border bg-white px-2 py-1 text-xs text-slate-700 hover:bg-slate-100"
+                          >
+                            Right
+                          </button>
+                        </div>
+                      </div>
                     </div>
 
                     <div className="border-t pt-4">
