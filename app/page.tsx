@@ -1838,7 +1838,7 @@ useEffect(() => {
     const domeCenterZ = 0;
 
     const zoom = 16 * previewZoom;
-    const yaw = degToRad(previewRotate - orientationDeg + 180);
+    const yaw = degToRad(previewRotate);
 
     const roomScaleY = 0.8;
     const roomScaleZ = 0.95;
@@ -1854,16 +1854,31 @@ useEffect(() => {
       clamp(windowOffset, 0, Math.max(0, roomWidth - windowWidth)) * zoom;
 
     function project(x: number, y: number, z: number) {
+      const theta = degToRad(orientationDeg);
+
+      const cx = (roomWidth * zoom) / 2;
+      const cy = (roomDepth * zoom * roomScaleY) / 2;
+
+      const dx = x - cx;
+      const dy = y - cy;
+
+      const rx = dx * Math.cos(theta) - dy * Math.sin(theta);
+      const ry = dx * Math.sin(theta) + dy * Math.cos(theta);
+
+      x = cx + rx;
+      y = cy + ry;
+
+      // 👇 原来的 camera rotation（只控制视角）
       const cosA = Math.cos(yaw);
       const sinA = Math.sin(yaw);
 
-      const rx = x * cosA - y * sinA;
-      const ry = x * sinA + y * cosA;
+      const rrx = x * cosA - y * sinA;
+      const rry = x * sinA + y * cosA;
 
       return {
-        x: originX + rx,
-        y: originY + ry * 0.4 - z,
-        depth: ry,
+        x: originX + rrx,
+        y: originY + rry * 0.4 - z,
+        depth: rry,
       };
     }
 
