@@ -2440,11 +2440,9 @@ if (!currentUser) {
 
             const user = { name, email };
 
-            // 先让用户进入 app
             localStorage.setItem("glareAppUser", JSON.stringify(user));
             setCurrentUser(user);
 
-            // 再尝试写数据库，不影响进入 app
             const { error } = await supabase.from("users").insert([
               {
                 name,
@@ -2453,7 +2451,7 @@ if (!currentUser) {
             ]);
 
             if (error) {
-              console.error("Failed to save user:", error.message);
+              console.error("Failed to save login:", error.message);
             }
           }}
           className="mt-6 w-full rounded-xl bg-slate-900 px-4 py-2 text-white hover:bg-slate-800"
