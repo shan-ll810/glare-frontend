@@ -1651,7 +1651,7 @@ useEffect(() => {
   const windowRightVal = windowLeftVal + windowWidth;
   const windowCenter = windowLeftVal + windowWidth / 2;
 
-  const rotationDeg = orientationDeg - 180;
+  const rotationDeg = 180 - orientationDeg;
 
   const shapes: React.ReactNode[] = [];
 
