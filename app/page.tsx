@@ -1838,7 +1838,7 @@ useEffect(() => {
     const domeCenterZ = 0;
 
     const zoom = 16 * previewZoom;
-    const yaw = degToRad(previewRotate + orientationDeg);
+    const yaw = degToRad(previewRotate - orientationDeg + 180);
 
     const roomScaleY = 0.8;
     const roomScaleZ = 0.95;
@@ -1887,15 +1887,10 @@ useEffect(() => {
       radius: number
     ) {
       const sun = sunVectorWorld(altitudeDegLocal, azimuthDegLocal);
-      const { inward, right } = getFacadeBasis(facadeAzimuth);
 
-      const sx = sun.x * right.x + sun.y * right.y;
-      const sy = sun.x * inward.x + sun.y * inward.y;
-      const sz = sun.z;
-
-      const px = (domeCenterX + sx * radius) * zoom;
-      const py = (domeCenterY + sy * radius * roomScaleY) * zoom;
-      const pz = (domeCenterZ + sz * radius * roomScaleZ) * zoom;
+      const px = (domeCenterX + sun.x * radius) * zoom;
+      const py = (domeCenterY - sun.y * radius * roomScaleY) * zoom;
+      const pz = (domeCenterZ + sun.z * radius * roomScaleZ) * zoom;
 
       return project(px, py, pz);
     }
