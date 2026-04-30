@@ -2534,7 +2534,7 @@ if (!currentUser) {
                   <div className="border-b px-4 py-3">
                     <h2 className="text-lg font-semibold">Inputs</h2>
                     <p className="mt-1 text-sm text-slate-500">
-                      Adjust parameters while keeping the results visible.
+                      Modify inputs to explore daylight behavior.
                     </p>
                   </div>
 
