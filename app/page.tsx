@@ -1,6 +1,6 @@
 "use client";
 
-//试试
+
 
 import { toPng } from "html-to-image";
 import { supabase } from "@/app/lib/supabase";
@@ -1277,6 +1277,47 @@ useEffect(() => {
     };
 
     img.src = url;
+  }
+
+  function exportHourlyResultsToCsv() {
+    if (!result?.times?.length) return;
+
+    const rows = [
+      [
+        "Time",
+        "Sun Visible",
+        "Altitude",
+        "Azimuth",
+        "Glare Area (sf)",
+        "Coverage (%)",
+        "Max Penetration (ft)",
+      ],
+      ...result.times.map((t) => [
+        t.label,
+        t.sun_visible ? "Yes" : "No",
+        t.altitude_deg === null ? "" : t.altitude_deg.toFixed(1),
+        t.azimuth_deg === null ? "" : t.azimuth_deg.toFixed(1),
+        t.sunlit_area_sqft.toFixed(2),
+        (t.coverage_ratio * 100).toFixed(1),
+        t.max_penetration_ft.toFixed(2),
+      ]),
+    ];
+
+    const csv = rows
+      .map((row) =>
+        row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
+      )
+      .join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "hourly-results.csv";
+    a.click();
+
+    URL.revokeObjectURL(url);
   }
 
   async function exportAllPreviews() {
@@ -2888,6 +2929,14 @@ if (!currentUser) {
                     className="rounded-lg border px-3 py-2 text-sm hover:bg-slate-50"
                   >
                     Export Comparison
+                  </button>
+
+                  <button
+                    onClick={exportHourlyResultsToCsv}
+                    disabled={!result}
+                    className="rounded-lg border px-3 py-2 text-sm hover:bg-slate-50 disabled:opacity-50"
+                  >
+                    Export Excel
                   </button>
 
                   <button
