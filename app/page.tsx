@@ -46,7 +46,7 @@ type SavedScenario = {
     windowOffset: number;
     latitude: number;
     orientationDeg: number;
-    analysisDate: "03-21" | "06-21" | "12-21";
+    analysisDate: "03-21" | "06-21" | "09-21" | "12-21";
     timeMode: "full_day" | "9" | "12" | "15";
     hasShading: boolean;
     shadingType: "horizontal" | "vertical" | "eggcrate";
@@ -100,9 +100,12 @@ function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
 }
 
-function resolveDate(date: "03-21" | "06-21" | "12-21") {
+function resolveDate(date: "03-21" | "06-21" | "09-21" | "12-21") {
   if (date === "03-21") return { month: 3, day: 21 };
+  if (date === "06-21") return { month: 6, day: 21 };
+  if (date === "09-21") return { month: 9, day: 21 };
   if (date === "12-21") return { month: 12, day: 21 };
+
   return { month: 6, day: 21 };
 }
 
@@ -933,9 +936,9 @@ export default function Page() {
 
   const [latitude, setLatitude] = useState(47.6);
 
-  const [analysisDate, setAnalysisDate] = useState<"03-21" | "06-21" | "12-21">(
-    "06-21"
-  );
+  const [analysisDate, setAnalysisDate] = useState<
+    "03-21" | "06-21" | "09-21" | "12-21"
+  >("06-21");
   const [timeMode, setTimeMode] = useState<"full_day" | "9" | "12" | "15">(
     "full_day"
   );
@@ -1951,7 +1954,7 @@ useEffect(() => {
       return projectWorld(px, py, pz);
     }
 
-    function seasonalSunPath(dateKey: "03-21" | "06-21" | "12-21") {
+    function seasonalSunPath(dateKey: "03-21" | "06-21" | "09-21" | "12-21") {
       const { month, day } = resolveDate(dateKey);
       const pts3d: { x: number; y: number }[] = [];
 
@@ -1988,7 +1991,7 @@ useEffect(() => {
     }
 
     function pathLabelPoint(
-      dateKey: "03-21" | "06-21" | "12-21",
+      dateKey: "03-21" | "06-21" | "09-21" | "12-21",
       hour: number,
       radius = domeRadius
     ) {
@@ -2250,6 +2253,7 @@ useEffect(() => {
     const sunPt = activeSunPoint();
     const juneLabelPt = pathLabelPoint("06-21", 12);
     const marchLabelPt = pathLabelPoint("03-21", 12);
+    const sepLabelPt = pathLabelPoint("09-21", 12);
     const decLabelPt = pathLabelPoint("12-21", 12);
 
     const northPt = groundCompassPoint(0, 50.5);
@@ -2335,6 +2339,13 @@ useEffect(() => {
           strokeDasharray="8 5"
         />
         <polyline
+          points={seasonalSunPath("09-21")}
+          fill="none"
+          stroke={analysisDate === "09-21" ? "#111111" : "#2f2f2f"}
+          strokeWidth={analysisDate === "12-21" ? "2.4" : "1.8"}
+        />
+
+        <polyline
           points={seasonalSunPath("12-21")}
           fill="none"
           stroke={analysisDate === "12-21" ? "#111111" : "#2f2f2f"}
@@ -2350,6 +2361,9 @@ useEffect(() => {
         </text>
         <text x={marchLabelPt.x + 8} y={marchLabelPt.y - 8} fontSize="13" fill="#111111">
           March 21
+        </text>
+         <text x={sepLabelPt.x + 8} y={marchLabelPt.y - 8} fontSize="13" fill="#111111">
+          September 21
         </text>
         <text x={decLabelPt.x + 8} y={decLabelPt.y + 5} fontSize="13" fill="#111111">
           Dec 21
@@ -2708,14 +2722,15 @@ if (!currentUser) {
                           value={analysisDate}
                           onChange={(e) =>
                             setAnalysisDate(
-                              e.target.value as "03-21" | "06-21" | "12-21"
+                              e.target.value as "03-21" | "06-21" | "09-21" | "12-21"
                             )
                           }
                           className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2"
                         >
-                          <option value="03-21">03-21</option>
-                          <option value="06-21">06-21</option>
-                          <option value="12-21">12-21</option>
+                          <option value="03-21">Spring Equinox</option>
+                          <option value="06-21">Summer Solstice</option>
+                          <option value="09-21">Autumn Equinox</option>
+                          <option value="12-21">Winter Solstice</option>
                         </select>
                       </label>
 
