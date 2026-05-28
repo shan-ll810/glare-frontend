@@ -2277,7 +2277,7 @@ useEffect(() => {
           />
         ))}
 
-        //3d update 
+
 
         <polygon
           points={pts([planeA, planeB, planeC, planeD])}
@@ -2908,7 +2908,10 @@ if (!currentUser) {
                 </div>
               </section>
 
-              <section className="min-h-0 overflow-y-auto rounded-2xl border border-slate-900 bg-white p-4 space-y-6">
+              
+
+              <section className="h-full min-h-0 overflow-y-auto rounded-2xl border border-slate-900 bg-white p-4">
+                <div className="space-y-6">
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() =>
@@ -3406,6 +3409,7 @@ if (!currentUser) {
                     {error}
                   </div>
                 )}
+                </div>
               </section>
             </div>
           </div>
