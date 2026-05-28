@@ -2251,9 +2251,11 @@ useEffect(() => {
     }
 
     const sunPt = activeSunPoint();
+
     const juneLabelPt = pathLabelPoint("06-21", 12);
-    const marchLabelPt = pathLabelPoint("03-21", 12);
-    const sepLabelPt = pathLabelPoint("09-21", 12);
+
+    const eqLabelPt = pathLabelPoint("03-21", 12);
+
     const decLabelPt = pathLabelPoint("12-21", 12);
 
     const northPt = groundCompassPoint(0, 50.5);
@@ -2352,18 +2354,20 @@ useEffect(() => {
           strokeWidth={analysisDate === "12-21" ? "2.4" : "1.8"}
         />
 
-        {timeMode === "operating_hours" || timeMode === "24hr" && (
+        {(timeMode === "operating_hours" || timeMode === "24hr") && sunPt && (
           <circle cx={sunPt.x} cy={sunPt.y} r="3.5" fill="#111111" />
         )}
 
         <text x={juneLabelPt.x - 10} y={juneLabelPt.y - 12} fontSize="13" fill="#111111">
           June 21
         </text>
-        <text x={marchLabelPt.x + 8} y={marchLabelPt.y - 8} fontSize="13" fill="#111111">
-          March 21
-        </text>
-         <text x={sepLabelPt.x + 8} y={marchLabelPt.y - 8} fontSize="13" fill="#111111">
-          September 21
+        <text
+          x={eqLabelPt.x + 12}
+          y={eqLabelPt.y - 10}
+          fontSize="13"
+          fill="#111111"
+        >
+          Mar / Sep 21
         </text>
         <text x={decLabelPt.x + 8} y={decLabelPt.y + 5} fontSize="13" fill="#111111">
           Dec 21
