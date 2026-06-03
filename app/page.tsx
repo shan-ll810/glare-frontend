@@ -625,7 +625,7 @@ function ScenarioLineChart({
               textAnchor="middle"
               fill="#64748b"
             >
-              `${hour.toString().padStart(2,"0")}:00`
+              {hour}:00
             </text>
           </g>
         );
@@ -701,20 +701,55 @@ function ScenarioLineChart({
       </text>
 
       {/* legend */}
-      <g transform={`translate(${padL}, ${h - 16})`}>
-        {series.map((s, idx) => {
-          const color = colors[idx % colors.length];
-          return (
-            <g key={s.id} transform={`translate(${idx * 150}, 0)`}>
-              <line x1="0" y1="-8" x2="18" y2="-8" stroke={color} strokeWidth="3" />
-              <circle cx="9" cy="-8" r="3.5" fill={color} stroke="white" strokeWidth="1.2" />
-              <text x="26" y="-4" fontSize="11" fill="#334155">
-                {s.name}
-              </text>
-            </g>
-          );
-        })}
-      </g>
+      {/* legend */}
+      {(() => {
+        const legendSpacing = Math.min(
+          140,
+          (w - padL - padR) / Math.max(series.length, 1)
+        );
+
+        return (
+          <g transform={`translate(${padL}, ${h - 35})`}>
+            {series.map((s, idx) => {
+              const color = colors[idx % colors.length];
+
+              return (
+                <g
+                  key={s.id}
+                  transform={`translate(${idx * legendSpacing}, 0)`}
+                >
+                  <line
+                    x1="0"
+                    y1="-8"
+                    x2="18"
+                    y2="-8"
+                    stroke={color}
+                    strokeWidth="3"
+                  />
+
+                  <circle
+                    cx="9"
+                    cy="-8"
+                    r="3.5"
+                    fill={color}
+                    stroke="white"
+                    strokeWidth="1.2"
+                  />
+
+                  <text
+                    x="26"
+                    y="-4"
+                    fontSize="11"
+                    fill="#334155"
+                  >
+                    {String(s.name || `Scenario ${idx + 1}`)}
+                  </text>
+                </g>
+              );
+            })}
+          </g>
+        );
+      })()}
       {hoveredPoint && (
         <g transform={`translate(${hoveredPoint.x + 10}, ${hoveredPoint.y - 28})`}>
           <rect
@@ -883,15 +918,24 @@ function OrientationDial({
           stroke="black"
           strokeWidth="7"
           strokeLinecap="round"
-          className="cursor-grab active:cursor-grabbing"
+          className="cursor-grab active:cursor-grabbing touch-none select-none"
           onPointerDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
             e.currentTarget.setPointerCapture(e.pointerId);
             onChange(eventToDeg(e));
           }}
           onPointerMove={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
             if (e.buttons === 1) {
               onChange(eventToDeg(e));
             }
+          }}
+          onPointerUp={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.currentTarget.releasePointerCapture(e.pointerId);
           }}
         />
 
