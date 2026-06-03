@@ -692,7 +692,7 @@ function ScenarioLineChart({
       {/* X axis label */}
       <text
         x={padL + plotW / 2}
-        y={h - 42}
+        y={padT + plotH + 52}
         fontSize="12"
         textAnchor="middle"
         fill="#475569"
@@ -709,7 +709,7 @@ function ScenarioLineChart({
         );
 
         return (
-          <g transform={`translate(${padL}, ${h - 35})`}>
+          <g transform={`translate(${padL}, ${h - 15})`}>
             {series.map((s, idx) => {
               const color = colors[idx % colors.length];
 
