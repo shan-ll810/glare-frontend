@@ -2797,7 +2797,35 @@ if (!currentUser) {
                     </p>
                   </div>
 
+                  
+
                   <div className="flex-1 overflow-y-auto px-4 py-4 pb-8 space-y-6">
+                    <div>
+                      <h3 className="text-base font-semibold">Program</h3>
+
+                      <label className="mt-3 block">
+                        <div className="mb-1 text-sm text-slate-600">
+                          Program Type
+                        </div>
+
+                        <select
+                          value={programType}
+                          onChange={(e) =>
+                            setProgramType(e.target.value as ProgramType)
+                          }
+                          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 outline-none focus:border-slate-500"
+                        >
+                          <option value="office">Office</option>
+                          <option value="classroom">Classroom</option>
+                          <option value="residential">Residential</option>
+                          <option value="healthcare">Healthcare</option>
+                          <option value="gallery">Gallery / Museum</option>
+                          <option value="greenhouse">Greenhouse</option>
+                          <option value="lab">Laboratory</option>
+                        </select>
+                      </label>
+                    </div>
+
                     <div>
                       <h3 className="text-base font-semibold">Room</h3>
                       <NumberInput
@@ -2959,22 +2987,7 @@ if (!currentUser) {
                           <option value="12-21">Winter Solstice (12-21)</option>
                         </select>
                       </label>
-                      <label className="mt-3 block">
-                        <div className="mb-1 text-sm text-slate-600">Program Type</div>
-                        <select
-                          value={programType}
-                          onChange={(e) => setProgramType(e.target.value as ProgramType)}
-                          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 outline-none focus:border-slate-500"
-                        >
-                          <option value="office">Office</option>
-                          <option value="classroom">Classroom</option>
-                          <option value="residential">Residential</option>
-                          <option value="healthcare">Healthcare</option>
-                          <option value="gallery">Gallery / Museum</option>
-                          <option value="greenhouse">Greenhouse</option>
-                          <option value="lab">Laboratory</option>
-                        </select>
-                      </label>
+                      
 
                       <label className="mt-3 block">
                         <div className="mb-1 text-sm text-slate-600">Time</div>
