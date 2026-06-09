@@ -800,67 +800,67 @@ function getProgramGuidance(
 
   const intensity =
     coverage > 35 || maxPenetration > 12 || glareArea > 80
-      ? "high"
+      ? "strong daylight potential"
       : coverage > 15 || maxPenetration > 6
-      ? "moderate"
-      : "low";
+      ? "moderate daylight exposure"
+      : "comfortable daylight condition";
 
   const base = {
     office: {
       opportunity:
-        "Daylight can support visual comfort, occupant well-being, and a stronger connection to the outdoor environment.",
+        "Daylight can support visual comfort, focus, occupant well-being, and a stronger connection to the outdoor environment.",
       caution:
-        "For screen-based work, manage direct sun near desks to reduce contrast and reflections.",
+        "Screen-based work may benefit from careful control of contrast and reflections during brighter periods.",
       strategy:
-        "Consider adjustable blinds, light shelves, or workstation layout changes that preserve daylight while controlling afternoon glare.",
+        "Explore adjustable blinds, light shelves, or workstation layout strategies that preserve daylight while supporting visual comfort.",
     },
     classroom: {
       opportunity:
         "Daylight can create a more engaging learning environment and reduce reliance on electric lighting.",
       caution:
-        "Direct sun should be managed near boards, screens, and student seating areas.",
+        "Certain periods of direct sunlight may affect visibility near boards, screens, or student work areas.",
       strategy:
-        "Use diffuse daylight strategies, exterior shading, or flexible blinds to balance brightness and visibility.",
+        "Explore diffuse daylight strategies, exterior shading, or flexible blinds to maintain daylight while supporting clear visibility.",
     },
     residential: {
       opportunity:
-        "Sunlight can improve comfort, seasonal warmth, and the overall quality of living spaces.",
+        "Sunlight can enhance comfort, seasonal warmth, and the overall quality of living spaces.",
       caution:
-        "Glare may become uncomfortable during low-angle morning or afternoon hours.",
+        "Morning or afternoon sun may create moments of brightness that occupants may want to adjust throughout the day.",
       strategy:
-        "Use operable shades or curtains so occupants can adjust daylight based on time of day and personal preference.",
+        "Consider operable shades or curtains so residents can tune daylight based on time, season, and personal preference.",
     },
     healthcare: {
       opportunity:
-        "Daylight can support a calming atmosphere and help occupants stay connected to natural daily rhythms.",
+        "Daylight can help create a calmer atmosphere and strengthen occupants’ connection to natural daily rhythms.",
       caution:
-        "Patient rooms and care areas still need careful control of brightness and contrast.",
+        "Patient rooms and care areas benefit from daylight that feels soft, stable, and visually comfortable.",
       strategy:
-        "Prioritize soft, controllable daylight with shading that protects comfort without removing access to sun and views.",
+        "Explore controllable shading that maintains access to daylight and views while supporting rest and comfort.",
     },
     gallery: {
       opportunity:
-        "Controlled daylight can enrich spatial experience and reduce the need for artificial lighting.",
+        "Controlled daylight can enrich spatial experience and reduce dependence on artificial lighting.",
       caution:
-        "Direct sunlight may create harsh contrast and may not be appropriate for sensitive displays.",
+        "Display areas may benefit from indirect or filtered sunlight to avoid harsh contrast on sensitive surfaces.",
       strategy:
-        "Use filtered, indirect, or clerestory daylight rather than direct sun on display surfaces.",
+        "Explore filtered, indirect, or clerestory daylight strategies that enhance atmosphere without overwhelming display zones.",
     },
     greenhouse: {
       opportunity:
-        "High solar exposure can support plant growth and make the greenhouse more productive.",
+        "High solar exposure can support plant growth, seasonal productivity, and the overall performance of the greenhouse.",
       caution:
-        "Circulation paths and work areas may still need glare control for occupant comfort.",
+        "Walkways, work benches, and gathering areas may still benefit from localized comfort strategies.",
       strategy:
-        "Keep strong solar access for plants, but use targeted shading near walkways, work benches, or gathering areas.",
+        "Preserve strong solar access for plants while exploring targeted shading only where people experience excessive brightness.",
     },
     lab: {
       opportunity:
-        "Daylight can improve the quality of research spaces and reduce dependence on electric lighting.",
+        "Daylight can improve the quality of research environments and reduce dependence on electric lighting.",
       caution:
-        "Task surfaces and instruments may require more controlled and uniform light conditions.",
+        "Task surfaces, instruments, and detailed work areas may benefit from more even daylight distribution.",
       strategy:
-        "Use shading or diffusing elements to reduce sharp contrast while maintaining useful daylight.",
+        "Explore diffusing elements or adjustable shading to soften contrast while maintaining useful daylight.",
     },
   };
 
@@ -3348,7 +3348,7 @@ if (!currentUser) {
                       return (
                         <>
                           <h3 className="text-lg font-semibold text-slate-900">
-                            Current Design Insight
+                            Design Opportunities
                           </h3>
 
                           <p className="mt-1 text-sm text-slate-500">
@@ -3357,7 +3357,7 @@ if (!currentUser) {
 
                           <div className="mt-4 rounded-xl bg-slate-50 p-4">
                             <div className="text-sm text-slate-500">
-                              Detected Design Priority
+                              What the Analysis Reveals
                             </div>
 
                             <div className="mt-1 text-base font-semibold text-slate-900">
@@ -3365,7 +3365,7 @@ if (!currentUser) {
                             </div>
 
                             <div className="mt-4 text-sm text-slate-500">
-                              Recommendation
+                              Opportunities to Explore
                             </div>
 
                             <p className="mt-1 text-sm font-medium text-slate-700">
