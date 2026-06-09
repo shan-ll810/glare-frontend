@@ -91,6 +91,7 @@ type ProgramType =
   | "greenhouse"
   | "lab";
 
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
@@ -867,6 +868,74 @@ function getProgramGuidance(
     intensity,
     orientation,
     ...base[programType],
+  };
+}
+
+function getDesignInsight(
+  programType: ProgramType,
+  result: AnalyzeResponse,
+  orientationDeg: number
+) {
+  const coverage = result.summary.average_coverage_ratio * 100;
+  const penetration = result.summary.max_penetration_ft;
+
+  const isHigh = coverage > 35 || penetration > 12;
+  const isModerate = coverage > 15 || penetration > 6;
+
+  const isWest = orientationDeg >= 225 && orientationDeg < 315;
+  const isEast = orientationDeg >= 45 && orientationDeg < 135;
+  const isSouth = orientationDeg >= 135 && orientationDeg < 225;
+
+  if (programType === "greenhouse") {
+    return {
+      priority: "Maintain useful solar access",
+      recommendation: "Avoid over-shading the full facade.",
+      reason:
+        "This program benefits from sunlight. Use targeted shading only near walkways or work areas where glare affects occupants.",
+    };
+  }
+
+  if (programType === "gallery") {
+    return {
+      priority: "Controlled daylight",
+      recommendation: "Use filtered or indirect daylight strategies.",
+      reason:
+        "Gallery spaces can benefit from daylight, but direct sun should be carefully controlled to avoid harsh contrast on display surfaces.",
+    };
+  }
+
+  if (isHigh && (isWest || isEast)) {
+    return {
+      priority: "Reduce low-angle glare",
+      recommendation: "Consider vertical fins or operable vertical shading.",
+      reason:
+        "The current result suggests stronger solar penetration, and east/west facades are often more affected by low-angle sun.",
+    };
+  }
+
+  if (isHigh && isSouth) {
+    return {
+      priority: "Reduce direct solar penetration",
+      recommendation: "Consider horizontal shading or light shelves.",
+      reason:
+        "The current result suggests stronger direct sun exposure. South-facing facades are usually easier to control with horizontal elements.",
+    };
+  }
+
+  if (isModerate) {
+    return {
+      priority: "Balance daylight and comfort",
+      recommendation: "Use light-touch or adjustable shading.",
+      reason:
+        "The current design provides useful daylight, but some glare control may improve comfort without removing sunlight.",
+    };
+  }
+
+  return {
+    priority: "Preserve daylight access",
+    recommendation: "No major shading change is needed at this stage.",
+    reason:
+      "The current result suggests low glare risk, so the design can prioritize daylight quality, views, and spatial openness.",
   };
 }
 
@@ -3247,6 +3316,52 @@ if (!currentUser) {
                                 {guidance.strategy}
                               </p>
                             </div>
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                )}
+
+                {result && (
+                  <div className="rounded-2xl border bg-white p-5 shadow-sm">
+                    {(() => {
+                      const insight = getDesignInsight(
+                        programType,
+                        result,
+                        orientationDeg
+                      );
+
+                      return (
+                        <>
+                          <h3 className="text-lg font-semibold text-slate-900">
+                            Current Design Insight
+                          </h3>
+
+                          <p className="mt-1 text-sm text-slate-500">
+                            Dynamic recommendation based on the selected program and current analysis result.
+                          </p>
+
+                          <div className="mt-4 rounded-xl bg-slate-50 p-4">
+                            <div className="text-sm text-slate-500">
+                              Detected Design Priority
+                            </div>
+
+                            <div className="mt-1 text-base font-semibold text-slate-900">
+                              {insight.priority}
+                            </div>
+
+                            <div className="mt-4 text-sm text-slate-500">
+                              Recommendation
+                            </div>
+
+                            <p className="mt-1 text-sm font-medium text-slate-700">
+                              {insight.recommendation}
+                            </p>
+
+                            <p className="mt-3 text-sm text-slate-600">
+                              {insight.reason}
+                            </p>
                           </div>
                         </>
                       );
