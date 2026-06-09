@@ -879,81 +879,171 @@ function getDesignInsight(
   const coverage = result.summary.average_coverage_ratio * 100;
   const penetration = result.summary.max_penetration_ft;
 
-  const isHigh = coverage > 35 || penetration > 12;
-  const isModerate = coverage > 15 || penetration > 6;
-
   const isWest = orientationDeg >= 225 && orientationDeg < 315;
   const isEast = orientationDeg >= 45 && orientationDeg < 135;
   const isSouth = orientationDeg >= 135 && orientationDeg < 225;
 
-  if (programType === "greenhouse") {
-    return {
-      status: "Strong Solar Access",
-      face: "🌞",
-      takeaway: "Excellent solar access for growth",
-      opportunity:
-        "The current design supports strong solar exposure, which can contribute positively to plant growth and greenhouse productivity.",
-      nextStep:
-        "Future studies could focus on localized comfort near walkways, work benches, or public gathering areas while preserving sunlight for plants.",
-    };
-  }
+  const programCriteria = {
+    office: {
+      label: "Office",
+      target: [10, 30],
+      ideal: "moderate daylight with controlled glare for screen-based work",
+      caution:
+        "Screen-based tasks may benefit from additional control if direct sun becomes too strong.",
+      good:
+        "The current result aligns well with office use by supporting useful daylight without excessive direct sun.",
+      low:
+        "The current result suggests limited direct daylight. This may still be comfortable, but future studies could explore ways to increase daylight access.",
+      high:
+        "The current result suggests strong direct daylight for office use. This creates daylight opportunity, but glare control may become more important.",
+    },
+    classroom: {
+      label: "Classroom",
+      target: [15, 35],
+      ideal: "engaging daylight with clear visibility for boards, screens, and student work areas",
+      caution:
+        "Boards, screens, and student seating areas may need careful glare control during brighter periods.",
+      good:
+        "The current result supports a bright learning environment while keeping direct sun within a manageable range.",
+      low:
+        "The current result suggests a softer daylight condition. Future studies could explore ways to bring in more useful daylight for learning spaces.",
+      high:
+        "The current result suggests strong daylight for a classroom. This can be positive, but visibility near boards and screens may need further study.",
+    },
+    residential: {
+      label: "Residential",
+      target: [10, 40],
+      ideal: "comfortable daylight with occupant control and seasonal flexibility",
+      caution:
+        "Residents may want adjustable control for privacy, comfort, and changing sun conditions.",
+      good:
+        "The current result supports a comfortable living environment with useful daylight and room for occupant control.",
+      low:
+        "The current result suggests a calm but relatively low direct daylight condition. Future studies could explore improved daylight access if desired.",
+      high:
+        "The current result suggests strong daylight for residential use. This can improve warmth and atmosphere, but adjustable shading may help maintain comfort.",
+    },
+    healthcare: {
+      label: "Healthcare",
+      target: [10, 25],
+      ideal: "soft, stable daylight that supports comfort, rest, and connection to natural rhythms",
+      caution:
+        "Patient and care areas usually benefit from gentle daylight rather than harsh direct sun.",
+      good:
+        "The current result supports a calm healthcare environment with useful daylight and limited glare concern.",
+      low:
+        "The current result suggests limited direct daylight. Future studies could explore ways to support daylight access while keeping the space calm.",
+      high:
+        "The current result suggests stronger direct sun than typical healthcare spaces may prefer. Comfort and rest conditions may benefit from softer daylight control.",
+    },
+    gallery: {
+      label: "Gallery / Museum",
+      target: [5, 20],
+      ideal: "controlled daylight that enhances atmosphere without overwhelming display areas",
+      caution:
+        "Display zones often benefit from filtered or indirect daylight to avoid harsh contrast.",
+      good:
+        "The current result supports an atmospheric daylight condition while keeping direct sun relatively controlled for display-oriented spaces.",
+      low:
+        "The current result suggests very limited direct daylight, which can be appropriate for sensitive displays but may reduce daylight atmosphere.",
+      high:
+        "The current result suggests strong direct daylight for a gallery setting. This creates atmosphere, but display protection and contrast control may need further study.",
+    },
+    greenhouse: {
+      label: "Greenhouse",
+      target: [35, 100],
+      ideal: "strong solar access that supports plant growth and greenhouse productivity",
+      caution:
+        "People-focused areas such as walkways and work benches may still need localized comfort strategies.",
+      good:
+        "The current result supports strong solar access, which is beneficial for plant growth and greenhouse productivity.",
+      low:
+        "The current result suggests lower solar access than a greenhouse may prefer. Future studies could explore ways to increase useful sunlight for plants.",
+      high:
+        "The current result provides strong solar exposure, which is generally positive for greenhouse use. Localized comfort strategies may still be helpful for occupants.",
+    },
+    lab: {
+      label: "Laboratory",
+      target: [8, 25],
+      ideal: "even daylight with controlled contrast for task surfaces and instruments",
+      caution:
+        "Detailed work areas and instruments may benefit from stable, diffuse daylight conditions.",
+      good:
+        "The current result supports useful daylight while keeping direct sun within a reasonable range for task-based research spaces.",
+      low:
+        "The current result suggests limited direct daylight. This may be comfortable, but future studies could explore improved daylight quality.",
+      high:
+        "The current result suggests strong direct daylight for lab use. This creates daylight opportunity, but task surfaces and instruments may need glare control.",
+    },
+  };
 
-  if (programType === "gallery") {
+  const criteria = programCriteria[programType];
+  const [minTarget, maxTarget] = criteria.target;
+
+  const withinTarget = coverage >= minTarget && coverage <= maxTarget;
+  const belowTarget = coverage < minTarget;
+  const aboveTarget = coverage > maxTarget;
+
+  const farBelow = coverage < minTarget * 0.6;
+  const farAbove = coverage > maxTarget * 1.35 || penetration > 12;
+
+  if (withinTarget) {
     return {
       status: "Performing Well",
       face: "😊",
-      takeaway: "Rich daylight atmosphere with room for careful control",
-      opportunity:
-        "The space has potential to use daylight as part of the visitor experience, creating atmosphere and reducing reliance on artificial lighting.",
+      programLabel: criteria.label,
+      targetRange: `${minTarget}–${maxTarget}% coverage`,
+      takeaway: "Well matched to this program",
+      opportunity: criteria.good,
       nextStep:
-        "Future studies could explore filtered or indirect daylight strategies to protect display zones while maintaining spatial quality.",
+        "The current configuration is a strong starting point. Future studies could compare seasonal conditions or shading options while preserving the current daylight quality.",
     };
   }
 
-  if (isHigh && (isWest || isEast)) {
+  if (belowTarget) {
     return {
-      status: "Worth Exploring",
-      face: "🤔",
-      takeaway: "Strong daylight potential",
-      opportunity:
-        "This facade receives substantial low-angle sunlight, which can bring brightness, warmth, and a strong daylight presence into the space.",
+      status: farBelow ? "Worth Exploring" : "Balanced",
+      face: farBelow ? "🤔" : "🙂",
+      programLabel: criteria.label,
+      targetRange: `${minTarget}–${maxTarget}% coverage`,
+      takeaway: farBelow
+        ? "Lower daylight access than this program typically benefits from"
+        : "Softer daylight condition with room to increase access",
+      opportunity: criteria.low,
       nextStep:
-        "Consider testing vertical fins or operable shading as design options to improve comfort during peak sun periods while preserving daylight access.",
+        "Consider testing larger openings, different orientation, reduced shading depth, or higher-transmission glazing if increasing daylight is a design priority.",
     };
   }
 
-  if (isHigh && isSouth) {
+  if (aboveTarget) {
     return {
-      status: "Strong Potential",
-      face: "😎",
-      takeaway: "Generous solar access with design potential",
-      opportunity:
-        "The current design brings generous daylight into the space, creating strong daylight availability and potential passive solar benefits.",
+      status: farAbove ? "Strong Daylight Potential" : "Balanced",
+      face: farAbove ? "😎" : "🙂",
+      programLabel: criteria.label,
+      targetRange: `${minTarget}–${maxTarget}% coverage`,
+      takeaway: farAbove
+        ? "More direct sun than this program may typically need"
+        : "Generous daylight with opportunities to tune comfort",
+      opportunity: criteria.high,
       nextStep:
-        "Consider testing horizontal shading or light shelves to soften direct sun while keeping the positive qualities of daylight.",
-    };
-  }
-
-  if (isModerate) {
-    return {
-      status: "Balanced",
-      face: "😀",
-      takeaway: "Balanced daylight with opportunities to tune comfort",
-      opportunity:
-        "The current design provides useful daylight and maintains a good level of solar access for the selected program.",
-      nextStep:
-        "Future iterations could explore light-touch or adjustable shading to fine-tune comfort without reducing the overall daylight quality.",
+        isWest || isEast
+          ? "Consider testing vertical fins or operable shading to manage low-angle sun while preserving daylight access."
+          : isSouth
+          ? "Consider testing horizontal shading, light shelves, or diffuse glazing to soften direct sun while keeping useful daylight."
+          : "Consider testing adjustable or localized shading strategies to tune comfort without losing the positive daylight quality.",
     };
   }
 
   return {
-    status: "Performing Well",
-    face: "😊",
-    takeaway: "Comfortable daylight conditions",
+    status: "Balanced",
+    face: "🙂",
+    programLabel: criteria.label,
+    targetRange: `${minTarget}–${maxTarget}% coverage`,
+    takeaway: "Program-based daylight balance",
     opportunity:
-      "The analysis suggests that useful daylight is reaching the space without introducing significant glare concerns.",
+      "The analysis suggests a balanced daylight condition for the selected program.",
     nextStep:
-      "This creates a strong foundation for maintaining daylight quality, views, and spatial openness. No major shading change is needed at this stage.",
+      "Future studies could compare shading and orientation options to refine the design.",
   };
 }
 
@@ -3338,7 +3428,11 @@ if (!currentUser) {
                             </div>
 
                             <div className="mt-1 text-base font-semibold text-slate-900">
-                              {programType.charAt(0).toUpperCase() + programType.slice(1)}
+                              {insight.programLabel}
+                            </div>
+
+                            <div className="mt-1 text-xs text-slate-500">
+                              Target range: {insight.targetRange}
                             </div>
 
                             <div className="mt-5 text-sm text-slate-500">
