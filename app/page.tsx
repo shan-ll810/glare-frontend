@@ -879,162 +879,119 @@ function getDesignInsight(
   const coverage = result.summary.average_coverage_ratio * 100;
   const penetration = result.summary.max_penetration_ft;
 
-  const isWest = orientationDeg >= 225 && orientationDeg < 315;
-  const isEast = orientationDeg >= 45 && orientationDeg < 135;
-  const isSouth = orientationDeg >= 135 && orientationDeg < 225;
+  const exposureLevel: "limited" | "active" | "deep" =
+    penetration >= 12 || coverage >= 20
+      ? "deep"
+      : penetration >= 5 || coverage >= 5
+      ? "active"
+      : "limited";
 
-  const exposureLevel: "low" | "moderate" | "high" =
-  coverage >= 35 || penetration >= 12
-    ? "high"
-    : coverage >= 12 || penetration >= 6
-    ? "moderate"
-    : "low";
+  const sunCharacter = {
+    limited: {
+      status: "Limited Direct Sun",
+      face: "🙂",
+      takeaway:
+        "Direct sun remains limited within the analyzed plane.",
+    },
+    active: {
+      status: "Active Direct Sun",
+      face: "😊",
+      takeaway:
+        "Direct sun reaches into the occupied zone and may influence spatial layout.",
+    },
+    deep: {
+      status: "Deep Sun Reach",
+      face: "😎",
+      takeaway:
+        "Direct sun penetrates deeply into the space and may affect program-specific activities.",
+    },
+  };
 
-  const programMatrix: Record<
+  const programCheatSheet: Record<
     ProgramType,
     {
       label: string;
-      tolerance: string;
-      low: string;
-      moderate: string;
-      high: string;
+      plane: string;
+      consideration: string;
+      nextCheck: string;
     }
   > = {
     office: {
       label: "Office",
-      tolerance: "Sun-sensitive program · low tolerance for sustained direct sun",
-      low:
-        "This office has low direct-sun exposure, which can support screen-based work and reduce glare risk. The next question is whether the space still receives enough useful diffuse daylight.",
-      moderate:
-        "This office receives active daylight with a manageable amount of direct sun. This can support daylight quality while keeping glare risk relatively controlled.",
-      high:
-        "This office receives strong direct sun. This can create a bright and active space, but screen glare, contrast, and reflections may need further study.",
+      plane:
+        "Primary plane: work plane, desks, computer screens, and typical workstation zones.",
+      consideration:
+        "Evaluate whether direct sun reaches work plane height, computer screens, and primary work areas. Limited direct sun can be positive for screen-based work, while deeper sun reach may require glare or reflection control.",
+      nextCheck:
+        "Compare workstation placement, screen orientation, and shading strategies during occupied hours.",
     },
     classroom: {
       label: "Classroom",
-      tolerance: "Sun-sensitive near boards, screens, and seating areas",
-      low:
-        "This classroom has low direct-sun exposure, which can support visual comfort near boards and screens. Future studies could check whether the room still feels bright enough for learning.",
-      moderate:
-        "This classroom receives active daylight with a manageable level of direct sun. This can support an engaging learning environment.",
-      high:
-        "This classroom receives strong direct sun. This can be positive for daylight access, but visibility near boards, screens, and student work areas may need further study.",
+      plane:
+        "Primary plane: student desks, teaching surfaces, whiteboards, and projection screens.",
+      consideration:
+        "Evaluate whether direct sun reaches student desks, teaching surfaces, or projection areas. Deeper direct sun may affect visibility, contrast, and comfort during class hours.",
+      nextCheck:
+        "Compare board visibility, seating comfort, and shading performance across different times of day.",
     },
     residential: {
       label: "Residential",
-      tolerance: "Medium tolerance · occupant control is important",
-      low:
-        "This residence has a calm daylight condition with limited direct sun. This can be comfortable, especially when views, privacy, and seasonal control are priorities.",
-      moderate:
-        "This residence receives active daylight with a balanced amount of direct sun. This can support warmth, atmosphere, and everyday comfort.",
-      high:
-        "This residence receives strong direct sun. This can bring warmth and character, but operable shades or curtains may help occupants tune comfort throughout the day.",
+      plane:
+        "Primary plane: living areas, seating zones, beds, and frequently occupied areas.",
+      consideration:
+        "Evaluate whether direct sun reaches primary living zones. Direct sun can add warmth, atmosphere, and seasonal variation, but comfort depends on occupant control.",
+      nextCheck:
+        "Compare morning versus afternoon sun, seasonal comfort, and operable shading or curtain strategies.",
     },
     healthcare: {
       label: "Healthcare",
-      tolerance: "Sun-sensitive program · soft and stable daylight preferred",
-      low:
-        "This healthcare space has low direct-sun exposure, which can support calm, stable, and visually comfortable conditions.",
-      moderate:
-        "This healthcare space receives active daylight while keeping direct sun relatively controlled. This can support comfort and connection to natural rhythms.",
-      high:
-        "This healthcare space receives strong direct sun. Softer daylight control may be helpful to support rest, comfort, and reduced contrast.",
+      plane:
+        "Primary plane: patient beds, treatment areas, resting zones, and caregiver work areas.",
+      consideration:
+        "Evaluate whether direct sun reaches patient beds or treatment areas. Soft and stable daylight is often preferred, while deep direct sun may create contrast or discomfort.",
+      nextCheck:
+        "Compare patient comfort, visual stability, and daylight access throughout occupied periods.",
     },
     gallery: {
       label: "Gallery / Museum",
-      tolerance: "Very sun-sensitive · direct sun on displays should be studied carefully",
-      low:
-        "This gallery has low direct-sun exposure, which can be appropriate for display-oriented spaces while still allowing atmospheric daylight strategies.",
-      moderate:
-        "This gallery receives active daylight. This can enrich spatial atmosphere, but display zones may need filtered or indirect daylight control.",
-      high:
-        "This gallery receives strong direct daylight. This can create a powerful atmosphere, but display protection, contrast, and material sensitivity should be studied carefully.",
+      plane:
+        "Primary plane: exhibits, display surfaces, artwork, and sensitive materials.",
+      consideration:
+        "Evaluate whether direct sun reaches display surfaces or sensitive materials. Limited direct sun can be appropriate, while deeper sun reach may require filtering or layout adjustment.",
+      nextCheck:
+        "Compare exhibit layouts, seasonal exposure, and filtered or indirect daylight strategies.",
     },
     greenhouse: {
       label: "Greenhouse",
-      tolerance: "Sun-seeking program · strong solar access supports plant growth",
-      low:
-        "This greenhouse has low direct-sun exposure. Since sunlight is a productive resource here, future studies could explore ways to increase useful solar access for plants.",
-      moderate:
-        "This greenhouse receives useful solar exposure that can support plant growth while leaving room for occupant comfort strategies.",
-      high:
-        "This greenhouse receives strong solar exposure, which is generally positive for plant growth and productivity. Localized comfort strategies may still be helpful near walkways or work areas.",
+      plane:
+        "Primary plane: planting beds, growing zones, crop surfaces, and work benches.",
+      consideration:
+        "Evaluate whether direct sun reaches the primary growing zones. For greenhouse use, deeper sun reach can support plant growth, but public walkways and work areas may still need comfort strategies.",
+      nextCheck:
+        "Compare seasonal solar reach, planting layouts, and crop-specific light requirements.",
     },
     lab: {
       label: "Laboratory",
-      tolerance: "Sun-sensitive near task surfaces, instruments, and screens",
-      low:
-        "This laboratory has low direct-sun exposure, which can support stable lighting for task surfaces and instruments.",
-      moderate:
-        "This laboratory receives active daylight with a manageable level of direct sun. This can improve spatial quality while keeping contrast relatively controlled.",
-      high:
-        "This laboratory receives strong direct sun. This creates daylight opportunity, but task surfaces, instruments, and screens may need glare or contrast control.",
+      plane:
+        "Primary plane: task surfaces, instruments, screens, and research workstations.",
+      consideration:
+        "Evaluate whether direct sun reaches task surfaces, instruments, or research workstations. Stable lighting and controlled contrast are usually important for lab work.",
+      nextCheck:
+        "Compare equipment locations, task-surface comfort, and shading options during occupied hours.",
     },
   };
 
-  const criteria = programMatrix[programType];
-  const reading = criteria[exposureLevel];
-
-  let status = "Active Daylight";
-  let face = "😊";
-  let takeaway = "Active daylight condition";
-
-  if (exposureLevel === "low") {
-    if (programType === "greenhouse") {
-      status = "Worth Further Study";
-      face = "🤔";
-      takeaway = "Low solar access for a sun-seeking program";
-    } else {
-      status = "Soft Daylight";
-      face = "🙂";
-      takeaway = "Low direct-sun exposure";
-    }
-  }
-
-  if (exposureLevel === "moderate") {
-    status = "Active Daylight";
-    face = "😊";
-    takeaway = "Useful daylight with manageable direct sun";
-  }
-
-  if (exposureLevel === "high") {
-    if (programType === "greenhouse") {
-      status = "Strong Solar Access";
-      face = "🌞";
-      takeaway = "Strong solar access for growth";
-    } else if (programType === "residential") {
-      status = "Strong Daylight Character";
-      face = "😎";
-      takeaway = "Strong daylight with occupant control needs";
-    } else {
-      status = "Worth Further Study";
-      face = "🤔";
-      takeaway = "High direct-sun exposure for this program";
-    }
-  }
-
-  const nextStep =
-    exposureLevel === "high"
-      ? isWest || isEast
-        ? "Consider testing vertical fins, operable shades, or interior controls to manage low-angle sun while preserving daylight access."
-        : isSouth
-        ? "Consider testing horizontal shading, light shelves, diffuse glazing, or interior controls to soften direct sun while preserving daylight quality."
-        : "Consider testing adjustable or localized shading strategies to tune comfort without losing the positive qualities of daylight."
-      : exposureLevel === "moderate"
-      ? "Future studies could compare seasonal conditions or shading options to fine-tune the balance between daylight access and visual comfort."
-      : programType === "greenhouse"
-      ? "Consider testing reduced shading, larger openings, or orientation changes if increasing solar access for plants is a priority."
-      : "Future studies could check diffuse daylight quality, seasonal variation, and occupant comfort rather than treating low direct sun as a problem.";
+  const character = sunCharacter[exposureLevel];
+  const program = programCheatSheet[programType];
 
   return {
-    status,
-    face,
-    programLabel: criteria.label,
-    tolerance: criteria.tolerance,
-    exposureLevel,
-    takeaway,
-    opportunity: reading,
-    nextStep,
+    status: character.status,
+    face: character.face,
+    programLabel: program.label,
+    plane: program.plane,
+    takeaway: character.takeaway,
+    designConsideration: program.consideration,
+    nextCheck: program.nextCheck,
   };
 }
 
@@ -3362,6 +3319,85 @@ if (!currentUser) {
                 </div>
 
                 {result && (
+                  <div className="rounded-2xl border bg-white p-5 shadow-sm">
+                    {(() => {
+                      const insight = getDesignInsight(
+                        programType,
+                        result,
+                        orientationDeg
+                      );
+
+                      return (
+                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_140px]">
+                          <div className="rounded-xl bg-slate-50 p-4">
+                            <div className="mb-4 flex items-start justify-between gap-4">
+                              <div>
+                                <h3 className="text-lg font-semibold text-slate-900">
+                                  Direct Sun Insights
+                                </h3>
+
+                                <p className="mt-1 text-sm text-slate-500">
+                                  A program-based design reading of direct sun coverage and penetration.
+                                </p>
+                              </div>
+
+                              <div className="flex shrink-0 items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-emerald-700">
+                                <span className="text-xl leading-none">{insight.face}</span>
+                                <span className="text-sm font-medium">
+                                  {insight.status}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="text-sm text-slate-500">
+                              Program
+                            </div>
+
+                            <div className="mt-1 text-base font-semibold text-slate-900">
+                              {insight.programLabel}
+                            </div>
+
+                            <div className="mt-1 text-xs text-slate-500">
+                              {insight.plane}
+                            </div>
+
+                            <div className="mt-5 text-sm text-slate-500">
+                              What the Analysis Reveals
+                            </div>
+
+                            <div className="mt-1 text-base font-semibold text-slate-900">
+                              {insight.takeaway}
+                            </div>
+
+                            <div className="mt-5 text-sm text-slate-500">
+                              Design Consideration
+                            </div>
+
+                            <p className="mt-1 text-sm text-slate-700">
+                              {insight.designConsideration}
+                            </p>
+
+                            <div className="mt-5 text-sm text-slate-500">
+                              Recommended Next Check
+                            </div>
+
+                            <p className="mt-1 text-sm text-slate-600">
+                              {insight.nextCheck}
+                            </p>
+                          </div>
+
+                          <div className="flex items-center justify-center rounded-xl bg-emerald-50">
+                            <div className="flex h-24 w-24 items-center justify-center rounded-full border border-emerald-200 bg-emerald-100 text-5xl opacity-90">
+                              {insight.face}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+
+                {result && (
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <MetricCard
                       title="Best Time"
@@ -3384,84 +3420,7 @@ if (!currentUser) {
                   </div>
                 )}
 
-                {result && (
-                  <div className="rounded-2xl border bg-white p-5 shadow-sm">
-                    {(() => {
-                      const insight = getDesignInsight(
-                        programType,
-                        result,
-                        orientationDeg
-                      );
-
-                      return (
-                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_140px]">
-                          <div className="rounded-xl bg-slate-50 p-4">
-                            <div className="mb-4 flex items-start justify-between gap-4">
-                              <div>
-                                <h3 className="text-lg font-semibold text-slate-900">
-                                  Daylight Insights
-                                </h3>
-
-                                <p className="mt-1 text-sm text-slate-500">
-                                  A positive design reading based on the selected program and current analysis result.
-                                </p>
-                              </div>
-
-                              <div className="flex shrink-0 items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-emerald-700">
-                                <span className="text-xl leading-none">{insight.face}</span>
-                                <span className="text-sm font-medium">
-                                  {insight.status}
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="text-sm text-slate-500">
-                              Program
-                            </div>
-
-                            <div className="mt-1 text-base font-semibold text-slate-900">
-                              {insight.programLabel}
-                            </div>
-
-                            <div className="mt-1 text-xs text-slate-500">
-                              Target range: {insight.tolerance}
-                            </div>
-
-                            <div className="mt-5 text-sm text-slate-500">
-                              What the Analysis Reveals
-                            </div>
-
-                            <div className="mt-1 text-base font-semibold text-slate-900">
-                              {insight.takeaway}
-                            </div>
-
-                            <div className="mt-5 text-sm text-slate-500">
-                              What's Working Well
-                            </div>
-
-                            <p className="mt-1 text-sm text-slate-700">
-                              {insight.opportunity}
-                            </p>
-
-                            <div className="mt-5 text-sm text-slate-500">
-                              Opportunities to Explore
-                            </div>
-
-                            <p className="mt-1 text-sm text-slate-600">
-                              {insight.nextStep}
-                            </p>
-                          </div>
-
-                          <div className="flex items-center justify-center rounded-xl bg-emerald-50">
-                            <div className="flex h-24 w-24 items-center justify-center rounded-full border border-emerald-200 bg-emerald-100 text-5xl opacity-90">
-                              {insight.face}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })()}
-                  </div>
-                )}
+                
 
 
                 {result && (
