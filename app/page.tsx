@@ -3314,49 +3314,49 @@ if (!currentUser) {
                       return (
                         <>
                           <div className="rounded-xl bg-slate-50 p-4">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <div className="text-sm text-slate-500">
-                                  Program
-                                </div>
-
-                                <div className="mt-1 text-base font-semibold text-slate-900">
-                                  {programType.charAt(0).toUpperCase() + programType.slice(1)}
-                                </div>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="text-sm text-slate-500">
+                                Program
                               </div>
 
-                              <div className="flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-emerald-700">
-                                <span className="text-xl">{insight.face}</span>
-                                <span className="text-sm font-medium">
-                                  {insight.status}
-                                </span>
+                              <div className="mt-1 text-base font-semibold text-slate-900">
+                                {programType.charAt(0).toUpperCase() + programType.slice(1)}
                               </div>
                             </div>
 
-                            <div className="mt-5 text-sm text-slate-500">
-                              What the Analysis Reveals
+                            <div className="flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-emerald-700">
+                              <span className="text-xl">{insight.face}</span>
+                              <span className="text-sm font-medium">
+                                {insight.status}
+                              </span>
                             </div>
-
-                            <div className="mt-1 text-base font-semibold text-slate-900">
-                              {insight.takeaway}
-                            </div>
-
-                            <div className="mt-5 text-sm text-slate-500">
-                              What's Working Well
-                            </div>
-
-                            <p className="mt-1 text-sm text-slate-700">
-                              {insight.opportunity}
-                            </p>
-
-                            <div className="mt-5 text-sm text-slate-500">
-                              Opportunities to Explore
-                            </div>
-
-                            <p className="mt-1 text-sm text-slate-600">
-                              {insight.nextStep}
-                            </p>
                           </div>
+
+                          <div className="mt-5 text-sm text-slate-500">
+                            What the Analysis Reveals
+                          </div>
+
+                          <div className="mt-1 text-base font-semibold text-slate-900">
+                            {insight.takeaway}
+                          </div>
+
+                          <div className="mt-5 text-sm text-slate-500">
+                            What's Working Well
+                          </div>
+
+                          <p className="mt-1 text-sm text-slate-700">
+                            {insight.opportunity}
+                          </p>
+
+                          <div className="mt-5 text-sm text-slate-500">
+                            Opportunities to Explore
+                          </div>
+
+                          <p className="mt-1 text-sm text-slate-600">
+                            {insight.nextStep}
+                          </p>
+                        </div>
 
                           <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_140px]">
                             <div className="rounded-xl bg-slate-50 p-4">
@@ -3406,13 +3406,7 @@ if (!currentUser) {
                         <>
                           <div className="flex items-start justify-between gap-6">
                             <div>
-                              <h3 className="text-lg font-semibold text-slate-900">
-                                Daylight Insights
-                              </h3>
-
-                              <p className="mt-1 text-sm text-slate-500">
-                                A positive design reading based on the selected program and current analysis result.
-                              </p>
+                            
                             </div>
 
                             <div className="hidden sm:flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-emerald-700">
@@ -3423,6 +3417,10 @@ if (!currentUser) {
 
                           <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_140px]">
                             <div className="rounded-xl bg-slate-50 p-4">
+                                  <h3 className="mb-4 text-lg font-semibold text-slate-900">
+                                    Daylight Insights
+                                  </h3>
+                                  
                               <div className="text-sm text-slate-500">
                                 What the Analysis Reveals
                               </div>
