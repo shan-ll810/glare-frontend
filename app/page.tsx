@@ -3312,154 +3312,70 @@ if (!currentUser) {
                       );
 
                       return (
-                        <>
+                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_140px]">
                           <div className="rounded-xl bg-slate-50 p-4">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <div className="text-sm text-slate-500">
-                                Program
+                            <div className="mb-4 flex items-start justify-between gap-4">
+                              <div>
+                                <h3 className="text-lg font-semibold text-slate-900">
+                                  Daylight Insights
+                                </h3>
+
+                                <p className="mt-1 text-sm text-slate-500">
+                                  A positive design reading based on the selected program and current analysis result.
+                                </p>
                               </div>
 
-                              <div className="mt-1 text-base font-semibold text-slate-900">
-                                {programType.charAt(0).toUpperCase() + programType.slice(1)}
+                              <div className="flex shrink-0 items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-emerald-700">
+                                <span className="text-xl leading-none">{insight.face}</span>
+                                <span className="text-sm font-medium">
+                                  {insight.status}
+                                </span>
                               </div>
                             </div>
 
-                            <div className="flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-emerald-700">
-                              <span className="text-xl">{insight.face}</span>
-                              <span className="text-sm font-medium">
-                                {insight.status}
-                              </span>
+                            <div className="text-sm text-slate-500">
+                              Program
+                            </div>
+
+                            <div className="mt-1 text-base font-semibold text-slate-900">
+                              {programType.charAt(0).toUpperCase() + programType.slice(1)}
+                            </div>
+
+                            <div className="mt-5 text-sm text-slate-500">
+                              What the Analysis Reveals
+                            </div>
+
+                            <div className="mt-1 text-base font-semibold text-slate-900">
+                              {insight.takeaway}
+                            </div>
+
+                            <div className="mt-5 text-sm text-slate-500">
+                              What's Working Well
+                            </div>
+
+                            <p className="mt-1 text-sm text-slate-700">
+                              {insight.opportunity}
+                            </p>
+
+                            <div className="mt-5 text-sm text-slate-500">
+                              Opportunities to Explore
+                            </div>
+
+                            <p className="mt-1 text-sm text-slate-600">
+                              {insight.nextStep}
+                            </p>
+                          </div>
+
+                          <div className="flex items-center justify-center rounded-xl bg-emerald-50">
+                            <div className="flex h-24 w-24 items-center justify-center rounded-full border border-emerald-200 bg-emerald-100 text-5xl opacity-90">
+                              {insight.face}
                             </div>
                           </div>
-
-                          <div className="mt-5 text-sm text-slate-500">
-                            What the Analysis Reveals
-                          </div>
-
-                          <div className="mt-1 text-base font-semibold text-slate-900">
-                            {insight.takeaway}
-                          </div>
-
-                          <div className="mt-5 text-sm text-slate-500">
-                            What's Working Well
-                          </div>
-
-                          <p className="mt-1 text-sm text-slate-700">
-                            {insight.opportunity}
-                          </p>
-
-                          <div className="mt-5 text-sm text-slate-500">
-                            Opportunities to Explore
-                          </div>
-
-                          <p className="mt-1 text-sm text-slate-600">
-                            {insight.nextStep}
-                          </p>
                         </div>
-
-                          <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_140px]">
-                            <div className="rounded-xl bg-slate-50 p-4">
-                              <div className="text-sm text-slate-500">
-                                What the Analysis Reveals
-                              </div>
-
-                              <div className="mt-1 text-base font-semibold text-slate-900">
-                                {insight.takeaway}
-                              </div>
-
-                              <div className="mt-4 text-sm text-slate-500">
-                                What’s Working Well
-                              </div>
-
-                              <p className="mt-1 text-sm text-slate-700">
-                                {insight.opportunity}
-                              </p>
-
-                              <div className="mt-4 text-sm text-slate-500">
-                                Opportunities to Explore
-                              </div>
-
-                              <p className="mt-1 text-sm text-slate-600">
-                                {insight.nextStep}
-                              </p>
-                            </div>
-
-                            <div className="flex items-center justify-center rounded-xl bg-emerald-50">
-                              <div className="flex h-24 w-24 items-center justify-center rounded-full border border-emerald-200 bg-emerald-100 text-5xl text-emerald-600 opacity-80">
-                                {insight.face}
-                              </div>
-                            </div>
-                          </div>
-                        </>
                       );
                     })()}
                   </div>
                 )}
-
-                {result && (
-                  <div className="rounded-2xl border bg-white p-5 shadow-sm">
-                    {(() => {
-                      const insight = getDesignInsight(programType, result, orientationDeg);
-
-                      return (
-                        <>
-                          <div className="flex items-start justify-between gap-6">
-                            <div>
-                            
-                            </div>
-
-                            <div className="hidden sm:flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-emerald-700">
-                              <span className="text-xl leading-none">{insight.face}</span>
-                              <span className="text-sm font-medium">{insight.status}</span>
-                            </div>
-                          </div>
-
-                          <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_140px]">
-                            <div className="rounded-xl bg-slate-50 p-4">
-                                  <h3 className="mb-4 text-lg font-semibold text-slate-900">
-                                    Daylight Insights
-                                  </h3>
-                                  
-                              <div className="text-sm text-slate-500">
-                                What the Analysis Reveals
-                              </div>
-
-                              <div className="mt-1 text-base font-semibold text-slate-900">
-                                {insight.takeaway}
-                              </div>
-
-                              <div className="mt-4 text-sm text-slate-500">
-                                What’s Working Well
-                              </div>
-
-                              <p className="mt-1 text-sm text-slate-700">
-                                {insight.opportunity}
-                              </p>
-
-                              <div className="mt-4 text-sm text-slate-500">
-                                Opportunities to Explore
-                              </div>
-
-                              <p className="mt-1 text-sm text-slate-600">
-                                {insight.nextStep}
-                              </p>
-                            </div>
-
-                            <div className="flex items-center justify-center rounded-xl bg-emerald-50">
-                              <div className="flex h-24 w-24 items-center justify-center rounded-full border border-emerald-200 bg-emerald-100 text-5xl opacity-90">
-                                {insight.face}
-                              </div>
-                            </div>
-                          </div>
-                        </>
-                      );
-                    })()}
-                  </div>
-                )}
-               
-
-          
 
 
                 {result && (
