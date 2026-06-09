@@ -82,6 +82,15 @@ type SunPatchResult = {
   segmented: boolean;
 };
 
+type ProgramType =
+  | "office"
+  | "classroom"
+  | "residential"
+  | "healthcare"
+  | "gallery"
+  | "greenhouse"
+  | "lab";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
@@ -769,6 +778,98 @@ function ScenarioLineChart({
     </svg>
   );
 }
+
+function getProgramGuidance(
+  programType: ProgramType,
+  result: AnalyzeResponse,
+  orientationDeg: number
+) {
+  const coverage = result.summary.average_coverage_ratio * 100;
+  const maxPenetration = result.summary.max_penetration_ft;
+  const glareArea = result.summary.max_sunlit_area_sqft;
+
+  const orientation =
+    orientationDeg >= 135 && orientationDeg < 225
+      ? "south-facing"
+      : orientationDeg >= 225 && orientationDeg < 315
+      ? "west-facing"
+      : orientationDeg >= 45 && orientationDeg < 135
+      ? "east-facing"
+      : "north-facing";
+
+  const intensity =
+    coverage > 35 || maxPenetration > 12 || glareArea > 80
+      ? "high"
+      : coverage > 15 || maxPenetration > 6
+      ? "moderate"
+      : "low";
+
+  const base = {
+    office: {
+      opportunity:
+        "Daylight can support visual comfort, occupant well-being, and a stronger connection to the outdoor environment.",
+      caution:
+        "For screen-based work, manage direct sun near desks to reduce contrast and reflections.",
+      strategy:
+        "Consider adjustable blinds, light shelves, or workstation layout changes that preserve daylight while controlling afternoon glare.",
+    },
+    classroom: {
+      opportunity:
+        "Daylight can create a more engaging learning environment and reduce reliance on electric lighting.",
+      caution:
+        "Direct sun should be managed near boards, screens, and student seating areas.",
+      strategy:
+        "Use diffuse daylight strategies, exterior shading, or flexible blinds to balance brightness and visibility.",
+    },
+    residential: {
+      opportunity:
+        "Sunlight can improve comfort, seasonal warmth, and the overall quality of living spaces.",
+      caution:
+        "Glare may become uncomfortable during low-angle morning or afternoon hours.",
+      strategy:
+        "Use operable shades or curtains so occupants can adjust daylight based on time of day and personal preference.",
+    },
+    healthcare: {
+      opportunity:
+        "Daylight can support a calming atmosphere and help occupants stay connected to natural daily rhythms.",
+      caution:
+        "Patient rooms and care areas still need careful control of brightness and contrast.",
+      strategy:
+        "Prioritize soft, controllable daylight with shading that protects comfort without removing access to sun and views.",
+    },
+    gallery: {
+      opportunity:
+        "Controlled daylight can enrich spatial experience and reduce the need for artificial lighting.",
+      caution:
+        "Direct sunlight may create harsh contrast and may not be appropriate for sensitive displays.",
+      strategy:
+        "Use filtered, indirect, or clerestory daylight rather than direct sun on display surfaces.",
+    },
+    greenhouse: {
+      opportunity:
+        "High solar exposure can support plant growth and make the greenhouse more productive.",
+      caution:
+        "Circulation paths and work areas may still need glare control for occupant comfort.",
+      strategy:
+        "Keep strong solar access for plants, but use targeted shading near walkways, work benches, or gathering areas.",
+    },
+    lab: {
+      opportunity:
+        "Daylight can improve the quality of research spaces and reduce dependence on electric lighting.",
+      caution:
+        "Task surfaces and instruments may require more controlled and uniform light conditions.",
+      strategy:
+        "Use shading or diffusing elements to reduce sharp contrast while maintaining useful daylight.",
+    },
+  };
+
+  return {
+    intensity,
+    orientation,
+    ...base[programType],
+  };
+}
+
 function OrientationDial({
   value,
   onChange,
@@ -1018,6 +1119,10 @@ export default function Page() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const [orientationDeg, setOrientationDeg] = useState(180);
+
+  
+
+  const [programType, setProgramType] = useState<ProgramType>("office");
 
   const scenarioStorageKey = currentUser
     ? `savedScenarios:${currentUser.email.toLowerCase()}`
@@ -2785,6 +2890,22 @@ if (!currentUser) {
                           <option value="12-21">Winter Solstice (12-21)</option>
                         </select>
                       </label>
+                      <label className="mt-3 block">
+                        <div className="mb-1 text-sm text-slate-600">Program Type</div>
+                        <select
+                          value={programType}
+                          onChange={(e) => setProgramType(e.target.value as ProgramType)}
+                          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 outline-none focus:border-slate-500"
+                        >
+                          <option value="office">Office</option>
+                          <option value="classroom">Classroom</option>
+                          <option value="residential">Residential</option>
+                          <option value="healthcare">Healthcare</option>
+                          <option value="gallery">Gallery / Museum</option>
+                          <option value="greenhouse">Greenhouse</option>
+                          <option value="lab">Laboratory</option>
+                        </select>
+                      </label>
 
                       <label className="mt-3 block">
                         <div className="mb-1 text-sm text-slate-600">Time</div>
@@ -3080,6 +3201,59 @@ if (!currentUser) {
                     />
                   </div>
                 )}
+
+                {result && (
+                  <div className="rounded-2xl border bg-white p-5 shadow-sm">
+                    {(() => {
+                      const guidance = getProgramGuidance(programType, result, orientationDeg);
+
+                      return (
+                        <>
+                          <div className="flex items-center justify-between gap-4">
+                            <div>
+                              <h3 className="text-lg font-semibold text-slate-900">
+                                Program-Based Daylight Guidance
+                              </h3>
+                              <p className="mt-1 text-sm text-slate-500">
+                                {guidance.orientation} facade · {guidance.intensity} solar exposure
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
+                            <div className="rounded-xl bg-slate-50 p-4">
+                              <div className="text-sm font-medium text-slate-700">
+                                Opportunity
+                              </div>
+                              <p className="mt-2 text-sm text-slate-600">
+                                {guidance.opportunity}
+                              </p>
+                            </div>
+
+                            <div className="rounded-xl bg-slate-50 p-4">
+                              <div className="text-sm font-medium text-slate-700">
+                                Design Consideration
+                              </div>
+                              <p className="mt-2 text-sm text-slate-600">
+                                {guidance.caution}
+                              </p>
+                            </div>
+
+                            <div className="rounded-xl bg-slate-50 p-4">
+                              <div className="text-sm font-medium text-slate-700">
+                                Rule of Thumb
+                              </div>
+                              <p className="mt-2 text-sm text-slate-600">
+                                {guidance.strategy}
+                              </p>
+                            </div>
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                )}
+
 
                 {result && (
                   <div className="overflow-hidden rounded-2xl border bg-white shadow-sm">
