@@ -888,54 +888,72 @@ function getDesignInsight(
 
   if (programType === "greenhouse") {
     return {
-      priority: "Maintain useful solar access",
-      recommendation: "Avoid over-shading the full facade.",
-      reason:
-        "This program benefits from sunlight. Use targeted shading only near walkways or work areas where glare affects occupants.",
+      status: "Strong Solar Access",
+      face: "🌞",
+      takeaway: "Excellent solar access for growth",
+      opportunity:
+        "The current design supports strong solar exposure, which can contribute positively to plant growth and greenhouse productivity.",
+      nextStep:
+        "Future studies could focus on localized comfort near walkways, work benches, or public gathering areas while preserving sunlight for plants.",
     };
   }
 
   if (programType === "gallery") {
     return {
-      priority: "Controlled daylight",
-      recommendation: "Use filtered or indirect daylight strategies.",
-      reason:
-        "Gallery spaces can benefit from daylight, but direct sun should be carefully controlled to avoid harsh contrast on display surfaces.",
+      status: "Atmospheric Daylight",
+      face: "◡",
+      takeaway: "Rich daylight atmosphere with room for careful control",
+      opportunity:
+        "The space has potential to use daylight as part of the visitor experience, creating atmosphere and reducing reliance on artificial lighting.",
+      nextStep:
+        "Future studies could explore filtered or indirect daylight strategies to protect display zones while maintaining spatial quality.",
     };
   }
 
   if (isHigh && (isWest || isEast)) {
     return {
-      priority: "Reduce low-angle glare",
-      recommendation: "Consider vertical fins or operable vertical shading.",
-      reason:
-        "The current result suggests stronger solar penetration, and east/west facades are often more affected by low-angle sun.",
+      status: "Worth Exploring",
+      face: "🤔",
+      takeaway: "Strong daylight potential",
+      opportunity:
+        "This facade receives substantial low-angle sunlight, which can bring brightness, warmth, and a strong daylight presence into the space.",
+      nextStep:
+        "Consider testing vertical fins or operable shading as design options to improve comfort during peak sun periods while preserving daylight access.",
     };
   }
 
   if (isHigh && isSouth) {
     return {
-      priority: "Reduce direct solar penetration",
-      recommendation: "Consider horizontal shading or light shelves.",
-      reason:
-        "The current result suggests stronger direct sun exposure. South-facing facades are usually easier to control with horizontal elements.",
+      status: "Strong Potential",
+      face: "😎",
+      takeaway: "Generous solar access with design potential",
+      opportunity:
+        "The current design brings generous daylight into the space, creating strong daylight availability and potential passive solar benefits.",
+      nextStep:
+        "Consider testing horizontal shading or light shelves to soften direct sun while keeping the positive qualities of daylight.",
     };
   }
 
   if (isModerate) {
     return {
-      priority: "Balance daylight and comfort",
-      recommendation: "Use light-touch or adjustable shading.",
-      reason:
-        "The current design provides useful daylight, but some glare control may improve comfort without removing sunlight.",
+      status: "Balanced",
+      face: "😀",
+      takeaway: "Balanced daylight with opportunities to tune comfort",
+      opportunity:
+        "The current design provides useful daylight and maintains a good level of solar access for the selected program.",
+      nextStep:
+        "Future iterations could explore light-touch or adjustable shading to fine-tune comfort without reducing the overall daylight quality.",
     };
   }
 
   return {
-    priority: "Preserve daylight access",
-    recommendation: "No major shading change is needed at this stage.",
-    reason:
-      "The current result suggests low glare risk, so the design can prioritize daylight quality, views, and spatial openness.",
+    status: "Performing Well",
+    face: "😊",
+    takeaway: "Comfortable daylight conditions",
+    opportunity:
+      "The analysis suggests that useful daylight is reaching the space without introducing significant glare concerns.",
+    nextStep:
+      "This creates a strong foundation for maintaining daylight quality, views, and spatial openness. No major shading change is needed at this stage.",
   };
 }
 
@@ -3287,58 +3305,6 @@ if (!currentUser) {
                 {result && (
                   <div className="rounded-2xl border bg-white p-5 shadow-sm">
                     {(() => {
-                      const guidance = getProgramGuidance(programType, result, orientationDeg);
-
-                      return (
-                        <>
-                          <div className="flex items-center justify-between gap-4">
-                            <div>
-                              <h3 className="text-lg font-semibold text-slate-900">
-                                Program-Based Daylight Guidance
-                              </h3>
-                              <p className="mt-1 text-sm text-slate-500">
-                                {guidance.orientation} facade · {guidance.intensity} solar exposure
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
-                            <div className="rounded-xl bg-slate-50 p-4">
-                              <div className="text-sm font-medium text-slate-700">
-                                Opportunity
-                              </div>
-                              <p className="mt-2 text-sm text-slate-600">
-                                {guidance.opportunity}
-                              </p>
-                            </div>
-
-                            <div className="rounded-xl bg-slate-50 p-4">
-                              <div className="text-sm font-medium text-slate-700">
-                                Design Consideration
-                              </div>
-                              <p className="mt-2 text-sm text-slate-600">
-                                {guidance.caution}
-                              </p>
-                            </div>
-
-                            <div className="rounded-xl bg-slate-50 p-4">
-                              <div className="text-sm font-medium text-slate-700">
-                                Rule of Thumb
-                              </div>
-                              <p className="mt-2 text-sm text-slate-600">
-                                {guidance.strategy}
-                              </p>
-                            </div>
-                          </div>
-                        </>
-                      );
-                    })()}
-                  </div>
-                )}
-
-                {result && (
-                  <div className="rounded-2xl border bg-white p-5 shadow-sm">
-                    {(() => {
                       const insight = getDesignInsight(
                         programType,
                         result,
@@ -3347,40 +3313,64 @@ if (!currentUser) {
 
                       return (
                         <>
-                          <h3 className="text-lg font-semibold text-slate-900">
-                            Design Opportunities
-                          </h3>
+                          <div className="flex items-start justify-between gap-6">
+                            <div>
+                              <h3 className="text-lg font-semibold text-slate-900">
+                                Daylight Insights
+                              </h3>
 
-                          <p className="mt-1 text-sm text-slate-500">
-                            Dynamic recommendation based on the selected program and current analysis result.
-                          </p>
-
-                          <div className="mt-4 rounded-xl bg-slate-50 p-4">
-                            <div className="text-sm text-slate-500">
-                              What the Analysis Reveals
+                              <p className="mt-1 text-sm text-slate-500">
+                                A positive design reading based on the selected program and current analysis result.
+                              </p>
                             </div>
 
-                            <div className="mt-1 text-base font-semibold text-slate-900">
-                              {insight.priority}
+                            <div className="hidden sm:flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-emerald-700">
+                              <span className="text-xl leading-none">{insight.face}</span>
+                              <span className="text-sm font-medium">{insight.status}</span>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_140px]">
+                            <div className="rounded-xl bg-slate-50 p-4">
+                              <div className="text-sm text-slate-500">
+                                What the Analysis Reveals
+                              </div>
+
+                              <div className="mt-1 text-base font-semibold text-slate-900">
+                                {insight.takeaway}
+                              </div>
+
+                              <div className="mt-4 text-sm text-slate-500">
+                                What’s Working Well
+                              </div>
+
+                              <p className="mt-1 text-sm text-slate-700">
+                                {insight.opportunity}
+                              </p>
+
+                              <div className="mt-4 text-sm text-slate-500">
+                                Opportunities to Explore
+                              </div>
+
+                              <p className="mt-1 text-sm text-slate-600">
+                                {insight.nextStep}
+                              </p>
                             </div>
 
-                            <div className="mt-4 text-sm text-slate-500">
-                              Opportunities to Explore
+                            <div className="flex items-center justify-center rounded-xl bg-emerald-50">
+                              <div className="flex h-24 w-24 items-center justify-center rounded-full border border-emerald-200 bg-emerald-100 text-5xl text-emerald-600 opacity-80">
+                                {insight.face}
+                              </div>
                             </div>
-
-                            <p className="mt-1 text-sm font-medium text-slate-700">
-                              {insight.recommendation}
-                            </p>
-
-                            <p className="mt-3 text-sm text-slate-600">
-                              {insight.reason}
-                            </p>
                           </div>
                         </>
                       );
                     })()}
                   </div>
                 )}
+               
+
+          
 
 
                 {result && (
