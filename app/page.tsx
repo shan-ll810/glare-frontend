@@ -879,12 +879,44 @@ function getDesignInsight(
   const coverage = result.summary.average_coverage_ratio * 100;
   const penetration = result.summary.max_penetration_ft;
 
+  const orientation =
+    orientationDeg >= 135 && orientationDeg < 225
+      ? "south"
+      : orientationDeg >= 225 && orientationDeg < 315
+      ? "west"
+      : orientationDeg >= 45 && orientationDeg < 135
+      ? "east"
+      : "north";
+
   const exposureLevel: "limited" | "active" | "deep" =
     penetration >= 12 || coverage >= 20
       ? "deep"
       : penetration >= 5 || coverage >= 5
       ? "active"
       : "limited";
+
+  const solarContext = {
+    north: {
+      label: "North-facing condition",
+      text:
+        "Limited direct sun is expected for north-facing spaces. If more sun exposure is desired, orientation, window placement, or program layout may need to be reconsidered.",
+    },
+    east: {
+      label: "East-facing condition",
+      text:
+        "East-facing spaces often receive lower-angle morning sun. Vertical fins, interior shades, or layout adjustments can help manage direct sun when it reaches occupied zones.",
+    },
+    south: {
+      label: "South-facing condition",
+      text:
+        "South-facing spaces usually have stronger solar opportunity. If direct sun remains limited, window size, shading depth, sill height, or facade configuration may be limiting solar reach.",
+    },
+    west: {
+      label: "West-facing condition",
+      text:
+        "West-facing spaces often receive lower-angle afternoon sun. Direct sun may create stronger glare concerns, especially for screens, seating, or task areas.",
+    },
+  };
 
   const sunCharacter = {
     limited: {
@@ -981,17 +1013,44 @@ function getDesignInsight(
     },
   };
 
+  const actionSuggestions =
+    exposureLevel === "limited"
+      ? [
+          "If more direct sun is desired, test a larger window width or taller window height.",
+          "Compare the current shading condition with reduced shading depth or shading turned off.",
+          orientation === "south"
+            ? "Because this is south-facing, limited direct sun may suggest that shading depth, sill height, or window size is restricting solar reach."
+            : "If site conditions allow, compare this orientation with a more solar-facing facade.",
+        ]
+      : exposureLevel === "active"
+      ? [
+          "Keep the current configuration as a baseline and compare seasonal conditions.",
+          "Fine-tune shading depth instead of removing shading entirely.",
+          "Check whether direct sun overlaps with program-sensitive areas such as work planes, displays, beds, or planting zones.",
+        ]
+      : [
+          "If glare-sensitive activities are affected, test deeper shading or more localized interior control.",
+          orientation === "east" || orientation === "west"
+            ? "For east/west sun, test vertical fins, operable shades, or layout adjustments."
+            : "For south-facing sun, test horizontal shading, light shelves, or diffuse glazing.",
+          "Consider moving glare-sensitive activities outside the direct sun zone while preserving daylight quality.",
+        ];
+
   const character = sunCharacter[exposureLevel];
   const program = programCheatSheet[programType];
+  const context = solarContext[orientation];
 
   return {
     status: character.status,
     face: character.face,
     programLabel: program.label,
     plane: program.plane,
+    solarContextLabel: context.label,
+    solarContextText: context.text,
     takeaway: character.takeaway,
     designConsideration: program.consideration,
     nextCheck: program.nextCheck,
+    actionSuggestions,
   };
 }
 
@@ -3337,7 +3396,7 @@ if (!currentUser) {
                                 </h3>
 
                                 <p className="mt-1 text-sm text-slate-500">
-                                  A program-based design reading of direct sun coverage and penetration.
+                                  A program-based design reading of direct sun coverage, penetration, and orientation.
                                 </p>
                               </div>
 
@@ -3362,6 +3421,18 @@ if (!currentUser) {
                             </div>
 
                             <div className="mt-5 text-sm text-slate-500">
+                              Solar Context
+                            </div>
+
+                            <div className="mt-1 text-base font-semibold text-slate-900">
+                              {insight.solarContextLabel}
+                            </div>
+
+                            <p className="mt-1 text-sm text-slate-600">
+                              {insight.solarContextText}
+                            </p>
+
+                            <div className="mt-5 text-sm text-slate-500">
                               What the Analysis Reveals
                             </div>
 
@@ -3384,6 +3455,16 @@ if (!currentUser) {
                             <p className="mt-1 text-sm text-slate-600">
                               {insight.nextCheck}
                             </p>
+
+                            <div className="mt-5 text-sm text-slate-500">
+                              Quick Design Moves
+                            </div>
+
+                            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-600">
+                              {insight.actionSuggestions.map((item, index) => (
+                                <li key={index}>{item}</li>
+                              ))}
+                            </ul>
                           </div>
 
                           <div className="flex items-center justify-center rounded-xl bg-emerald-50">
